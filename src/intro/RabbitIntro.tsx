@@ -12,7 +12,7 @@ const CROUCH_MS = 550
 const DIG_MS = 1300
 const ENTER_MS = 1100
 const ZOOM_MS = 1550
-const BLACK_MS = 400
+const BLACK_MS = 650
 const TOTAL_MS = LOOK_MS + CROUCH_MS + DIG_MS + ENTER_MS + ZOOM_MS + BLACK_MS
 
 const LOOK_END = LOOK_MS
@@ -128,13 +128,14 @@ function poseAt(ms: number): Frame {
     hole = lerp(36, 88, easeOutCubic(t))
     phase = 'dig'
   } else if (elapsed <= ENTER_END) {
-    const t = easeInCubic((elapsed - DIG_END) / ENTER_MS)
-    rot = 18 + t * 22
-    ty = 28 + t * 90
-    scaleX = lerp(1.08, 0.22, t)
-    scaleY = lerp(0.84, 0.16, t)
-    opacity = 1 - t
-    hole = lerp(88, 168, t)
+    const raw = (elapsed - DIG_END) / ENTER_MS
+    const t = easeInOutCubic(raw)
+    rot = 18 + t * 26
+    ty = 28 + t * 62
+    scaleX = lerp(1.08, 0.38, t)
+    scaleY = lerp(0.84, 0.3, t)
+    opacity = raw < 0.82 ? 1 : 1 - (raw - 0.82) / 0.18
+    hole = lerp(88, 220, easeOutCubic(raw))
     phase = 'enter'
   } else if (elapsed <= ZOOM_END) {
     const t = (elapsed - ENTER_END) / ZOOM_MS
@@ -274,6 +275,7 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
       aria-modal="true"
       aria-labelledby="intro-copy"
       data-intro-phase={frame.playing ? frame.phase : 'idle'}
+      data-intro-elapsed={Math.round(frame.elapsed)}
     >
       <div
         className="absolute inset-0 bg-white"
@@ -348,7 +350,7 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
 
           <p
             id="intro-copy"
-            className={`mt-2 font-serif text-xl italic tracking-tight text-zinc-400 sm:text-2xl ${frame.playing ? 'opacity-0' : ''} transition-opacity duration-300`}
+            className={`mt-2 font-serif text-xl italic text-zinc-400 sm:text-2xl ${frame.playing ? 'opacity-0' : ''} transition-opacity duration-300`}
           >
             click the rabbit
           </p>
