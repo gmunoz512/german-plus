@@ -180,7 +180,7 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
   useEffect(() => {
     let raf = 0
     const tick = (now: number) => {
-      if (!playing.current) {
+      if (!playing.current || startAt.current <= 0) {
         raf = requestAnimationFrame(tick)
         return
       }
