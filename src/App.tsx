@@ -377,8 +377,7 @@ export default function App() {
               behind the veil
             </h2>
             <p className="mt-3 max-w-lg text-fog">
-              short writing from building stackd: decisions, detours, and what
-              i&apos;m learning while the product is still wet.
+              short writings from building to thoughts on the future of ai
             </p>
 
             <div className="mt-6 rounded-2xl border border-dashed border-line bg-transparent px-6 py-8 sm:px-8">
