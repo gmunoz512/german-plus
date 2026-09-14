@@ -265,8 +265,8 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
                 style={{
                   width: zoomHole * 2,
                   height: zoomHole * 2,
-                  bottom: '8%',
-                  transform: 'translateX(-50%)',
+                  top: '84%',
+                  transform: 'translate(-50%, -50%)',
                   boxShadow:
                     frame.zoom > 0
                       ? '0 0 0 2px rgba(255,255,255,0.18) inset'
@@ -299,7 +299,7 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
             {dirt.length > 0 && (
               <div
                 aria-hidden
-                className="pointer-events-none absolute bottom-10 left-1/2 z-30 h-0 w-0"
+                className="pointer-events-none absolute bottom-[12%] left-1/2 z-30 h-0 w-0"
               >
                 {dirt.map((p) => (
                   <span
