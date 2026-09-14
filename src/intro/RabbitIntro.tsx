@@ -18,8 +18,8 @@ function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n))
 }
 
-function easeInOutQuart(t: number) {
-  return t < 0.5 ? 8 * t * t * t * t : 1 - (-2 * t + 2) ** 4 / 2
+function easeInCubic(t: number) {
+  return t * t * t
 }
 
 function useReducedMotion() {
@@ -94,7 +94,7 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
         const elapsed = t - warpStart.current
         warpT = clamp(elapsed / WARP_MS, 0, 1)
         const maxR = Math.hypot(window.innerWidth, window.innerHeight) * 1.05
-        r = 7 + easeInOutQuart(warpT) * maxR
+        r = 7 + easeInCubic(warpT) * maxR
         if (elapsed >= WARP_MS) {
           finish()
           return
