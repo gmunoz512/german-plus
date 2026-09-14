@@ -3,32 +3,23 @@ import {
   useEffect,
   useRef,
   useState,
-  type MouseEvent,
   type PointerEvent,
 } from 'react'
-import Rabbit, { type RabbitPhase } from './Rabbit'
+import Rabbit from './Rabbit'
 import { markIntroComplete } from './storage'
 
 type RabbitIntroProps = {
   onComplete: () => void
 }
 
-const DIG_MS = 720
-const SINK_MS = 480
-const WARP_MS = 1050
+const WARP_MS = 1080
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n))
 }
 
-function easeInOutCubic(t: number) {
-  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2
-}
-
-function standFromY(clientY: number) {
-  const h = window.innerHeight
-  const y = (clientY - h * 0.12) / (h * 0.76)
-  return 1 - clamp(y, 0, 1)
+function easeInOutQuart(t: number) {
+  return t < 0.5 ? 8 * t * t * t * t : 1 - (-2 * t + 2) ** 4 / 2
 }
 
 function useReducedMotion() {
@@ -48,21 +39,18 @@ function useReducedMotion() {
 
 export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
   const reduced = useReducedMotion()
-  const [phase, setPhase] = useState<RabbitPhase>('idle')
-  const [stand, setStand] = useState(0)
+  const [warping, setWarping] = useState(false)
   const [now, setNow] = useState(() => performance.now())
-  const [phaseElapsed, setPhaseElapsed] = useState(0)
-  const [hole, setHole] = useState({ x: 0, y: 0, r: 0, warp: 0 })
+  const [look, setLook] = useState({ x: 0.28, y: 0.12 })
+  const [hole, setHole] = useState({ x: 0, y: 0, r: 7, t: 0 })
 
-  const targetStand = useRef(0)
-  const standAmt = useRef(0)
-  const phaseRef = useRef<RabbitPhase>('idle')
-  const phaseStart = useRef(0)
+  const lookTarget = useRef({ x: 0.28, y: 0.12 })
+  const lookAmt = useRef({ x: 0.28, y: 0.12 })
+  const warpingRef = useRef(false)
+  const warpStart = useRef(0)
   const finished = useRef(false)
-  const dragging = useRef(false)
-  const suppressClick = useRef(false)
-  const pointerStart = useRef({ x: 0, y: 0 })
   const rabbitRef = useRef<HTMLButtonElement>(null)
+  const dotRef = useRef<HTMLButtonElement>(null)
 
   const finish = useCallback(() => {
     if (finished.current) return
@@ -72,200 +60,148 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
   }, [onComplete])
 
   const holeAnchor = useCallback(() => {
-    const el = rabbitRef.current
+    const el = dotRef.current
     if (!el) {
-      return { x: window.innerWidth * 0.5, y: window.innerHeight * 0.55 }
+      return { x: window.innerWidth / 2, y: window.innerHeight * 0.62 }
     }
     const box = el.getBoundingClientRect()
-    return { x: box.left + box.width * 0.52, y: box.top + box.height * 0.86 }
+    return { x: box.left + box.width / 2, y: box.top + box.height / 2 }
   }, [])
 
   useEffect(() => {
-    phaseRef.current = phase
-  }, [phase])
-
-  useEffect(() => {
     const prevOverflow = document.body.style.overflow
+    const prevBg = document.body.style.background
     document.body.style.overflow = 'hidden'
+    document.body.style.background = '#fff'
     return () => {
       document.body.style.overflow = prevOverflow
+      document.body.style.background = prevBg
     }
   }, [])
 
   useEffect(() => {
     let raf = 0
     const tick = (t: number) => {
-      const currentPhase = phaseRef.current
-      const smoothing = reduced ? 1 : 0.11
-      standAmt.current += (targetStand.current - standAmt.current) * smoothing
-
-      let elapsed = t - phaseStart.current
-      if (currentPhase === 'idle') elapsed = 0
-
-      if (currentPhase === 'dig' && elapsed >= DIG_MS) {
-        phaseStart.current = t
-        elapsed = 0
-        phaseRef.current = 'sink'
-        setPhase('sink')
-      } else if (currentPhase === 'sink' && elapsed >= SINK_MS) {
-        phaseStart.current = t
-        elapsed = 0
-        phaseRef.current = 'warp'
-        setPhase('warp')
-      } else if (currentPhase === 'warp' && elapsed >= WARP_MS) {
-        finish()
-        return
+      if (!reduced && !warpingRef.current) {
+        lookAmt.current.x += (lookTarget.current.x - lookAmt.current.x) * 0.1
+        lookAmt.current.y += (lookTarget.current.y - lookAmt.current.y) * 0.1
       }
 
+      let warpT = 0
+      let r = 7
       const anchor = holeAnchor()
-      let r = 0
-      let warp = 0
-      if (phaseRef.current === 'dig') {
-        r = (elapsed / DIG_MS) * 36
-      } else if (phaseRef.current === 'sink') {
-        r = 36 + (elapsed / SINK_MS) * 22
-      } else if (phaseRef.current === 'warp') {
-        warp = clamp(elapsed / WARP_MS, 0, 1)
-        r = 58 + easeInOutCubic(warp) * Math.max(window.innerWidth, window.innerHeight) * 1.35
+      if (warpingRef.current) {
+        const elapsed = t - warpStart.current
+        warpT = clamp(elapsed / WARP_MS, 0, 1)
+        const maxR = Math.hypot(window.innerWidth, window.innerHeight) * 1.05
+        r = 7 + easeInOutQuart(warpT) * maxR
+        if (elapsed >= WARP_MS) {
+          finish()
+          return
+        }
       }
 
       setNow(t)
-      setStand(standAmt.current)
-      setPhaseElapsed(elapsed)
-      setHole({ x: anchor.x, y: anchor.y, r, warp })
+      setLook({ x: lookAmt.current.x, y: lookAmt.current.y })
+      setHole({ x: anchor.x, y: anchor.y, r, t: warpT })
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
   }, [finish, holeAnchor, reduced])
 
-  const beginDig = useCallback(() => {
-    if (phaseRef.current !== 'idle' || finished.current) return
+  const beginWarp = useCallback(() => {
+    if (warpingRef.current || finished.current) return
     if (reduced) {
       finish()
       return
     }
-    phaseStart.current = performance.now()
-    phaseRef.current = 'dig'
-    setPhase('dig')
+    warpingRef.current = true
+    warpStart.current = performance.now()
+    setWarping(true)
   }, [finish, reduced])
 
   const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    if (phaseRef.current !== 'idle' || reduced) return
-    const isTouch = event.pointerType === 'touch' || event.pointerType === 'pen'
-    if (isTouch && !dragging.current) return
-    if (isTouch) {
-      const dx = event.clientX - pointerStart.current.x
-      const dy = event.clientY - pointerStart.current.y
-      if (Math.hypot(dx, dy) > 8) suppressClick.current = true
-    }
-    targetStand.current = standFromY(event.clientY)
-  }
-
-  const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (phaseRef.current !== 'idle') return
-    dragging.current = true
-    suppressClick.current = false
-    pointerStart.current = { x: event.clientX, y: event.clientY }
-    if (event.pointerType !== 'mouse') {
-      event.currentTarget.setPointerCapture(event.pointerId)
+    if (warpingRef.current || reduced) return
+    const el = rabbitRef.current
+    const origin = el
+      ? el.getBoundingClientRect()
+      : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight }
+    const cx = origin.left + origin.width * 0.52
+    const cy = origin.top + origin.height * 0.38
+    lookTarget.current = {
+      x: clamp((event.clientX - cx) / (window.innerWidth * 0.36), -1, 1),
+      y: clamp((event.clientY - cy) / (window.innerHeight * 0.36), -1, 1),
     }
   }
 
-  const onPointerUp = (event: PointerEvent<HTMLDivElement>) => {
-    dragging.current = false
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId)
-    }
-  }
-
-  const onRabbitClick = (event: MouseEvent<HTMLButtonElement>) => {
-    if (suppressClick.current) {
-      event.preventDefault()
-      suppressClick.current = false
-      return
-    }
-    beginDig()
-  }
-
-  const warping = phase === 'warp'
   const mask =
-    hole.r > 1
-      ? `radial-gradient(circle at ${hole.x}px ${hole.y}px, transparent ${Math.max(0, hole.r - 70)}px, #000 ${hole.r}px)`
+    warping && hole.r > 1
+      ? `radial-gradient(circle at ${hole.x}px ${hole.y}px, transparent ${hole.r}px, #000 ${hole.r + 3}px)`
       : undefined
 
   return (
     <div
-      className="fixed inset-0 z-50 touch-none select-none lowercase"
+      className="fixed inset-0 z-50 select-none lowercase"
       role="dialog"
       aria-modal="true"
       aria-labelledby="intro-copy"
     >
-      {warping && (
-        <TunnelRings x={hole.x} y={hole.y} t={hole.warp} />
-      )}
+      {warping && <Tunnel x={hole.x} y={hole.y} r={hole.r} t={hole.t} />}
 
       <div
-        className="absolute inset-0 bg-ink"
+        className="absolute inset-0 bg-white"
         style={
           mask
             ? { maskImage: mask, WebkitMaskImage: mask, maskSize: '100% 100%' }
             : undefined
         }
         onPointerMove={onPointerMove}
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
       >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,165,116,0.08),_transparent_55%)]"
-        />
+        <div className="flex h-full flex-col items-center justify-center px-6">
+          <button
+            ref={rabbitRef}
+            type="button"
+            onClick={beginWarp}
+            disabled={warping}
+            aria-label="click the rabbit to enter german+"
+            className="cursor-pointer bg-transparent p-0 outline-none disabled:cursor-default focus-visible:[&_svg]:drop-shadow-[0_0_16px_rgba(0,0,0,0.18)]"
+          >
+            <Rabbit
+              lookX={look.x}
+              lookY={look.y}
+              now={now}
+              warpT={hole.t}
+            />
+          </button>
 
-        <p className="pointer-events-none absolute left-6 top-6 font-serif text-xl tracking-tight text-paper normal-case">
-          gm
-        </p>
+          <button
+            ref={dotRef}
+            type="button"
+            onClick={beginWarp}
+            disabled={warping}
+            aria-label="enter german+"
+            className="-mt-3 flex size-11 cursor-pointer items-center justify-center rounded-full bg-transparent outline-none disabled:cursor-default"
+          >
+            <span
+              className={`block size-3 rounded-full bg-black ${warping || reduced ? '' : 'intro-dot-pulse'}`}
+            />
+          </button>
 
-        <div className="flex h-full items-center justify-center px-6">
-          <div className="flex flex-col items-center gap-6 md:flex-row md:gap-16">
-            <button
-              ref={rabbitRef}
-              type="button"
-              onClick={onRabbitClick}
-              disabled={phase !== 'idle'}
-              aria-label="click the rabbit to enter german+"
-              className="cursor-pointer rounded-[2rem] bg-transparent p-0 outline-none disabled:cursor-default focus-visible:[&_svg]:drop-shadow-[0_0_20px_rgba(212,165,116,0.5)]"
-            >
-              <Rabbit
-                stand={stand}
-                phase={phase}
-                now={now}
-                phaseElapsed={phaseElapsed}
-              />
-            </button>
-
-            <div
-              id="intro-copy"
-              className={`text-center md:text-left ${phase === 'idle' ? '' : 'opacity-0'} transition-opacity duration-300`}
-            >
-              <p className="font-serif text-3xl italic tracking-tight text-paper sm:text-4xl">
-                click the rabbit
-              </p>
-              <p className="mt-3 max-w-[16rem] text-sm leading-relaxed text-fog">
-                {reduced
-                  ? 'enter german+'
-                  : 'up to stand · down to lounge'}
-              </p>
-            </div>
-          </div>
+          <p
+            id="intro-copy"
+            className={`mt-8 font-serif text-xl italic tracking-tight text-zinc-400 sm:text-2xl ${warping ? 'opacity-0' : ''} transition-opacity duration-200`}
+          >
+            click the rabbit
+          </p>
         </div>
       </div>
 
-      {phase === 'idle' && (
+      {!warping && (
         <button
           type="button"
           onClick={finish}
-          className="absolute bottom-6 right-6 z-20 text-xs tracking-wide text-fog/90 transition-colors hover:text-paper"
+          className="absolute bottom-6 right-6 z-20 text-xs tracking-wide text-zinc-400 transition-colors hover:text-zinc-700"
         >
           skip
         </button>
@@ -274,43 +210,38 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
   )
 }
 
-function TunnelRings({ x, y, t }: { x: number; y: number; t: number }) {
-  const scale = 0.35 + t * 14
-  const spin = t * 70
+function Tunnel({
+  x,
+  y,
+  r,
+  t,
+}: {
+  x: number
+  y: number
+  r: number
+  t: number
+}) {
+  const veil = Math.max(0, 1 - t * 1.35)
   return (
-    <div
-      className="pointer-events-none absolute inset-0 overflow-hidden"
-      aria-hidden
-      style={{ perspective: '900px' }}
-    >
-      <div
-        className="absolute"
-        style={{
-          left: x,
-          top: y,
-          width: 120,
-          height: 80,
-          transform: `translate(-50%, -50%) rotateX(62deg) rotate(${spin}deg) scale(${scale})`,
-          transformStyle: 'preserve-3d',
-          opacity: Math.max(0, 1 - t * 1.25),
-        }}
-      >
-        {Array.from({ length: 9 }, (_, i) => (
-          <span
-            key={i}
-            className="absolute left-1/2 top-1/2 rounded-full border"
-            style={{
-              width: 28 + i * 26,
-              height: 28 + i * 26,
-              marginLeft: -(14 + i * 13),
-              marginTop: -(14 + i * 13),
-              borderColor:
-                i % 2 === 0 ? 'rgba(212,165,116,0.45)' : 'rgba(244,241,234,0.16)',
-              boxShadow: i === 2 ? '0 0 24px rgba(212,165,116,0.2)' : undefined,
-            }}
-          />
-        ))}
-      </div>
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      <svg className="absolute inset-0 h-full w-full">
+        <circle cx={x} cy={y} r={Math.max(0, r)} fill="#0a0a0b" opacity={veil} />
+        {Array.from({ length: 7 }, (_, i) => {
+          const ring = Math.max(0, r * (0.22 + i * 0.12) * (0.55 + t * 0.7))
+          return (
+            <circle
+              key={i}
+              cx={x}
+              cy={y}
+              r={ring}
+              fill="none"
+              stroke={i % 2 === 0 ? 'rgba(255,255,255,0.28)' : 'rgba(10,10,11,0.55)'}
+              strokeWidth={i === 0 ? 2.4 : 1.2}
+              opacity={Math.max(0, 0.9 - t * 0.95)}
+            />
+          )
+        })}
+      </svg>
     </div>
   )
 }
