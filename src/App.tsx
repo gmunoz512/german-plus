@@ -363,15 +363,10 @@ export default function App() {
                   rel="noopener noreferrer"
                   className="flex items-center justify-between gap-4 py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
-                  <div className="min-w-0">
-                    <span className="block text-lg font-medium text-paper group-hover:text-accent transition-colors">
-                      birthday in mars
-                    </span>
-                    <span className="mt-1 block text-sm text-fog">
-                      code for the mars weekend toy
-                    </span>
-                  </div>
-                  <ArrowUpRight className="size-4 shrink-0 text-fog group-hover:text-accent transition-colors" aria-hidden />
+                  <span className="text-lg font-medium text-paper group-hover:text-accent transition-colors">
+                    birthday in mars
+                  </span>
+                  <ArrowUpRight className="size-4 text-fog group-hover:text-accent transition-colors" aria-hidden />
                 </a>
               </li>
             </ul>
