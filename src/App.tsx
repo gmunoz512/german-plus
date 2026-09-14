@@ -293,26 +293,15 @@ export default function App() {
                           </article>
                         ))}
                       </div>
-                      <div className="mt-5 flex flex-wrap gap-3">
-                        <a
-                          href="https://gmunoz512.github.io/mars-sky/"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 rounded-full bg-paper px-4 py-2 text-sm font-medium text-ink hover:bg-paper-dim transition-colors duration-200"
-                        >
-                          open birthday in mars
-                          <ExternalLink className="size-3.5" aria-hidden />
-                        </a>
-                        <a
-                          href="https://github.com/gmunoz512/mars-sky"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-sm text-fog hover:text-paper transition-colors duration-200"
-                        >
-                          github
-                          <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
-                        </a>
-                      </div>
+                      <a
+                        href="https://gmunoz512.github.io/mars-sky/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-5 inline-flex items-center gap-2 rounded-full bg-paper px-4 py-2 text-sm font-medium text-ink hover:bg-paper-dim transition-colors duration-200"
+                      >
+                        open birthday in mars
+                        <ExternalLink className="size-3.5" aria-hidden />
+                      </a>
                     </div>
                   </div>
                 )}
