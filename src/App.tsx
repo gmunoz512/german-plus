@@ -71,7 +71,7 @@ export default function App() {
         className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,165,116,0.06),_transparent_55%)]"
       />
 
-      <div className="relative mx-auto w-full max-w-3xl lg:max-w-6xl px-6 sm:px-8">
+      <div className="relative mx-auto w-full max-w-3xl md:max-w-6xl px-6 sm:px-8">
         <header className="flex items-center justify-between pt-6 pb-3 fade-up">
           <a href="#top" className="font-serif text-xl text-paper tracking-tight normal-case">
             gm
@@ -116,8 +116,8 @@ export default function App() {
             </div>
           </section>
 
-          <div className="lg:grid lg:grid-cols-2 lg:gap-x-14 lg:items-start lg:[grid-template-areas:'about_products'_'thoughts_fun']">
-          <section id="about" className="lg:[grid-area:about] py-10 sm:py-12 border-b border-line-soft lg:border-b-0">
+          <div className="md:grid md:grid-cols-2 md:gap-x-12 md:items-start md:[grid-template-areas:'about_products'_'thoughts_fun']">
+          <section id="about" className="md:[grid-area:about] py-10 sm:py-12 border-b border-line-soft md:border-b-0">
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               about
             </h2>
@@ -145,7 +145,7 @@ export default function App() {
             </div>
           </section>
 
-          <section id="products" className="lg:[grid-area:products] py-10 sm:py-12 border-b border-line-soft lg:border-b-0 lg:border-l lg:border-line-soft lg:pl-14">
+          <section id="products" className="md:[grid-area:products] py-10 sm:py-12 border-b border-line-soft md:border-b-0 md:border-l md:border-line-soft md:pl-10">
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               products
             </h2>
@@ -320,7 +320,7 @@ export default function App() {
             </ul>
           </section>
 
-          <section id="for-fun" className="lg:[grid-area:fun] py-10 sm:py-12 border-b border-line-soft lg:border-b-0 lg:border-l lg:border-line-soft lg:pl-14 lg:pt-0">
+          <section id="for-fun" className="md:[grid-area:fun] py-10 sm:py-12 border-b border-line-soft md:border-b-0 md:border-l md:border-line-soft md:pl-10 md:pt-0">
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               fun builds: github
             </h2>
@@ -358,7 +358,7 @@ export default function App() {
             </ul>
           </section>
 
-          <section id="thoughts" className="lg:[grid-area:thoughts] py-10 sm:py-12 border-b border-line-soft lg:border-b-0 lg:pt-0">
+          <section id="thoughts" className="md:[grid-area:thoughts] py-10 sm:py-12 border-b border-line-soft md:border-b-0 md:pt-0">
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               behind the veil
             </h2>
