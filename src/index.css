@@ -100,3 +100,17 @@
     transform: translateY(0);
   }
 }
+
+@keyframes intro-dot-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.22);
+  }
+}
+
+.intro-dot-pulse {
+  animation: intro-dot-pulse 2.6s ease-in-out infinite;
+}
