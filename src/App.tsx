@@ -164,7 +164,7 @@ export default function App() {
               products
             </h2>
             <p className="mt-3 max-w-lg text-fog">
-              stackd is the main thing. mars was a weekend rabbit hole.
+              my rabbit holes
             </p>
 
             <ul className="mt-6 space-y-0">
