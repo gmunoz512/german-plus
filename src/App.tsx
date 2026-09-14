@@ -64,7 +64,7 @@ function StatusPill({ status }: { status: string }) {
 export default function App() {
   const [stackdOpen, setStackdOpen] = useState(false)
   const [marsOpen, setMarsOpen] = useState(false)
-  const [openEssay, setOpenEssay] = useState<string | null>(essays[0]?.id ?? null)
+  const [openEssay, setOpenEssay] = useState<string | null>(null)
 
   return (
     <div className="min-h-svh bg-ink text-mist lowercase">
