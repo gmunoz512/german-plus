@@ -105,7 +105,7 @@ function poseAt(ms: number): Frame {
     ty = 14 + t * 28
     scaleX = 1 + t * 0.06
     scaleY = 1 - t * 0.18
-    hole = t * 22
+    hole = t * 48
   } else if (elapsed <= DIG_END) {
     const t = (elapsed - CROUCH_END) / DIG_MS
     const bob = Math.sin(elapsed / 42) * 8
@@ -114,7 +114,7 @@ function poseAt(ms: number): Frame {
     ty = 42 + bob
     scaleX = 1.06
     scaleY = 0.82
-    hole = lerp(22, 88, easeOutCubic(t))
+    hole = lerp(48, 120, easeOutCubic(t))
   } else if (elapsed <= ENTER_END) {
     const t = easeInCubic((elapsed - DIG_END) / ENTER_MS)
     rot = 18 + t * 16
@@ -122,7 +122,7 @@ function poseAt(ms: number): Frame {
     scaleX = lerp(1.06, 0.28, t)
     scaleY = lerp(0.82, 0.22, t)
     opacity = 1 - t
-    hole = lerp(88, 150, t)
+    hole = lerp(120, 200, t)
   } else {
     const t = (elapsed - ENTER_END) / ZOOM_MS
     rot = 34
@@ -261,11 +261,11 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
             {zoomHole > 1 && (
               <div
                 aria-hidden
-                className="pointer-events-none absolute left-1/2 z-[5] rounded-full bg-black"
+                className="pointer-events-none absolute left-1/2 z-20 rounded-full bg-black"
                 style={{
                   width: zoomHole * 2,
                   height: zoomHole * 2,
-                  bottom: frame.playing ? 18 : 28,
+                  bottom: '8%',
                   transform: 'translateX(-50%)',
                   boxShadow:
                     frame.zoom > 0
@@ -281,7 +281,7 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
               onClick={begin}
               disabled={frame.playing}
               aria-label="click the rabbit to enter german+"
-              className={`relative cursor-pointer bg-transparent p-0 outline-none disabled:cursor-default focus-visible:opacity-90 ${frame.elapsed > DIG_END ? 'z-0' : 'z-10'}`}
+              className="relative z-10 cursor-pointer bg-transparent p-0 outline-none disabled:cursor-default focus-visible:opacity-90"
             >
               <img
                 src={RABBIT_SRC}
