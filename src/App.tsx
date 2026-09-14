@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import { ArrowUpRight, ChevronDown, ExternalLink } from 'lucide-react'
-import PortalIntro from './intro/PortalIntro'
-import { hasCompletedIntro } from './intro/storage'
 
 const pillars = [
   {
@@ -65,17 +63,9 @@ function StatusPill({ status }: { status: string }) {
 export default function App() {
   const [stackdOpen, setStackdOpen] = useState(false)
   const [marsOpen, setMarsOpen] = useState(false)
-  const [introDone, setIntroDone] = useState(hasCompletedIntro)
 
   return (
-    <>
-      {!introDone && (
-        <PortalIntro onComplete={() => setIntroDone(true)} />
-      )}
-      <div
-        className="min-h-svh bg-ink text-mist lowercase"
-        {...(!introDone ? { inert: true, 'aria-hidden': true } : {})}
-      >
+    <div className="min-h-svh bg-ink text-mist lowercase">
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,165,116,0.06),_transparent_55%)]"
@@ -406,6 +396,5 @@ export default function App() {
         </footer>
       </div>
     </div>
-    </>
   )
 }
