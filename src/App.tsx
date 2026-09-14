@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ArrowUpRight, ChevronDown, ExternalLink } from 'lucide-react'
-import RabbitIntro from './intro/RabbitIntro'
+import PortalIntro from './intro/PortalIntro'
 import { hasCompletedIntro } from './intro/storage'
 
 const pillars = [
@@ -70,7 +70,7 @@ export default function App() {
   return (
     <>
       {!introDone && (
-        <RabbitIntro onComplete={() => setIntroDone(true)} />
+        <PortalIntro onComplete={() => setIntroDone(true)} />
       )}
       <div
         className="min-h-svh bg-ink text-mist lowercase"
