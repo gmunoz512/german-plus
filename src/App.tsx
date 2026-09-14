@@ -83,23 +83,8 @@ export default function App() {
             <a href="#thoughts" className="hover:text-paper transition-colors duration-200">
               thoughts
             </a>
-            <a
-              href="https://github.com/gmunoz512"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 hover:text-paper transition-colors duration-200"
-            >
-              github
-              <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/g-mu%C3%B1oz"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 hover:text-paper transition-colors duration-200"
-            >
-              linkedin
-              <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
+            <a href="#for-fun" className="hover:text-paper transition-colors duration-200">
+              fun builds
             </a>
           </nav>
         </header>
