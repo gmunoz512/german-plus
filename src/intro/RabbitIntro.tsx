@@ -12,7 +12,7 @@ type RabbitIntroProps = {
   onComplete: () => void
 }
 
-const WARP_MS = 1080
+const WARP_MS = 1450
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n))
@@ -181,7 +181,7 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
             onClick={beginWarp}
             disabled={warping}
             aria-label="enter german+"
-            className="-mt-3 flex size-11 cursor-pointer items-center justify-center rounded-full bg-transparent outline-none disabled:cursor-default"
+            className="-mt-10 flex size-11 cursor-pointer items-center justify-center rounded-full bg-transparent outline-none disabled:cursor-default"
           >
             <span
               className={`block size-3 rounded-full bg-black ${warping || reduced ? '' : 'intro-dot-pulse'}`}
@@ -221,7 +221,7 @@ function Tunnel({
   r: number
   t: number
 }) {
-  const veil = Math.max(0, 1 - t * 1.35)
+  const veil = t < 0.38 ? 1 : Math.max(0, 1 - (t - 0.38) / 0.5)
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
       <svg className="absolute inset-0 h-full w-full">
