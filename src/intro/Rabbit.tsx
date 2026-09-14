@@ -51,7 +51,7 @@ export default function Rabbit({ stand, phase, now, phaseElapsed }: RabbitProps)
   return (
     <svg
       viewBox="0 0 360 380"
-      className="block h-auto w-[min(72vw,22rem)] sm:w-[min(48vw,26rem)]"
+      className="block h-auto w-[min(72vw,22rem)] overflow-visible sm:w-[min(48vw,26rem)]"
       aria-hidden
     >
       <ellipse

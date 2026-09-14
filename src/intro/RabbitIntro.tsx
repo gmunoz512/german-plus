@@ -87,7 +87,6 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
   useEffect(() => {
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    rabbitRef.current?.focus()
     return () => {
       document.body.style.overflow = prevOverflow
     }
@@ -235,7 +234,7 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
               onClick={onRabbitClick}
               disabled={phase !== 'idle'}
               aria-label="click the rabbit to enter german+"
-              className="cursor-pointer rounded-[2rem] bg-transparent p-0 disabled:cursor-default"
+              className="cursor-pointer rounded-[2rem] bg-transparent p-0 outline-none disabled:cursor-default focus-visible:[&_svg]:drop-shadow-[0_0_20px_rgba(212,165,116,0.5)]"
             >
               <Rabbit
                 stand={stand}
@@ -266,7 +265,7 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
         <button
           type="button"
           onClick={finish}
-          className="absolute bottom-6 right-6 z-20 text-xs tracking-wide text-fog transition-colors hover:text-paper"
+          className="absolute bottom-6 right-6 z-20 text-xs tracking-wide text-fog/90 transition-colors hover:text-paper"
         >
           skip
         </button>
@@ -293,7 +292,7 @@ function TunnelRings({ x, y, t }: { x: number; y: number; t: number }) {
           height: 80,
           transform: `translate(-50%, -50%) rotateX(62deg) rotate(${spin}deg) scale(${scale})`,
           transformStyle: 'preserve-3d',
-          opacity: 1 - t * 0.55,
+          opacity: Math.max(0, 1 - t * 1.25),
         }}
       >
         {Array.from({ length: 9 }, (_, i) => (
