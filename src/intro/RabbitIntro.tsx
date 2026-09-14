@@ -7,17 +7,23 @@ type RabbitIntroProps = {
 
 const RABBIT_SRC = `${import.meta.env.BASE_URL}intro/rabbit.jpg`
 
-const LOOK_MS = 800
-const CROUCH_MS = 600
-const DIG_MS = 1400
-const ENTER_MS = 1200
-const ZOOM_MS = 1600
-const TOTAL_MS = LOOK_MS + CROUCH_MS + DIG_MS + ENTER_MS + ZOOM_MS
+const LOOK_MS = 700
+const CROUCH_MS = 550
+const DIG_MS = 1300
+const ENTER_MS = 1100
+const ZOOM_MS = 1550
+const BLACK_MS = 400
+const TOTAL_MS = LOOK_MS + CROUCH_MS + DIG_MS + ENTER_MS + ZOOM_MS + BLACK_MS
 
 const LOOK_END = LOOK_MS
 const CROUCH_END = LOOK_END + CROUCH_MS
 const DIG_END = CROUCH_END + DIG_MS
 const ENTER_END = DIG_END + ENTER_MS
+const ZOOM_END = ENTER_END + ZOOM_MS
+
+const HOLE_TOP = '93%'
+const CAM_ORIGIN = '50% 82%'
+const RABBIT_ORIGIN = '50% 92%'
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n))
@@ -68,6 +74,7 @@ type Frame = {
   veil: number
   playing: boolean
   elapsed: number
+  phase: 'idle' | 'look' | 'crouch' | 'dig' | 'enter' | 'zoom' | 'black'
 }
 
 const IDLE: Frame = {
@@ -82,6 +89,7 @@ const IDLE: Frame = {
   veil: 0,
   playing: false,
   elapsed: 0,
+  phase: 'idle',
 }
 
 function poseAt(ms: number): Frame {
@@ -94,45 +102,61 @@ function poseAt(ms: number): Frame {
   let hole = 0
   let zoom = 0
   let veil = 0
+  let phase: Frame['phase'] = 'look'
 
   if (elapsed <= LOOK_END) {
     const t = easeOutCubic(elapsed / LOOK_MS)
     rot = t * 11
-    ty = t * 14
+    ty = t * 10
+    phase = 'look'
   } else if (elapsed <= CROUCH_END) {
     const t = easeInOutCubic((elapsed - LOOK_END) / CROUCH_MS)
-    rot = 11 + t * 4
-    ty = 14 + t * 28
-    scaleX = 1 + t * 0.06
-    scaleY = 1 - t * 0.18
-    hole = t * 48
+    rot = 11 + t * 5
+    ty = 10 + t * 18
+    scaleX = 1 + t * 0.08
+    scaleY = 1 - t * 0.16
+    hole = t * 36
+    phase = 'crouch'
   } else if (elapsed <= DIG_END) {
     const t = (elapsed - CROUCH_END) / DIG_MS
-    const bob = Math.sin(elapsed / 42) * 8
+    const bob = Math.sin(elapsed / 42) * 7
     const jitter = Math.sin(elapsed / 31) * 3.2
-    rot = 15 + jitter
-    ty = 42 + bob
-    scaleX = 1.06
-    scaleY = 0.82
-    hole = lerp(48, 120, easeOutCubic(t))
+    rot = 16 + jitter
+    ty = 28 + bob
+    scaleX = 1.08
+    scaleY = 0.84
+    hole = lerp(36, 88, easeOutCubic(t))
+    phase = 'dig'
   } else if (elapsed <= ENTER_END) {
     const t = easeInCubic((elapsed - DIG_END) / ENTER_MS)
-    rot = 18 + t * 16
-    ty = 42 + t * 130
-    scaleX = lerp(1.06, 0.28, t)
-    scaleY = lerp(0.82, 0.22, t)
+    rot = 18 + t * 22
+    ty = 28 + t * 90
+    scaleX = lerp(1.08, 0.22, t)
+    scaleY = lerp(0.84, 0.16, t)
     opacity = 1 - t
-    hole = lerp(120, 200, t)
-  } else {
+    hole = lerp(88, 168, t)
+    phase = 'enter'
+  } else if (elapsed <= ZOOM_END) {
     const t = (elapsed - ENTER_END) / ZOOM_MS
-    rot = 34
-    ty = 172
-    scaleX = 0.28
-    scaleY = 0.22
+    rot = 40
+    ty = 118
+    scaleX = 0.22
+    scaleY = 0.16
     opacity = 0
-    hole = lerp(150, 220, easeOutCubic(clamp(t * 1.4, 0, 1)))
+    hole = lerp(168, 240, easeOutCubic(clamp(t * 1.4, 0, 1)))
     zoom = easeInCubic(t)
-    veil = easeInCubic(clamp((t - 0.15) / 0.7, 0, 1))
+    veil = easeInCubic(clamp((t - 0.12) / 0.65, 0, 1))
+    phase = 'zoom'
+  } else {
+    rot = 40
+    ty = 118
+    scaleX = 0.22
+    scaleY = 0.16
+    opacity = 0
+    hole = 240
+    zoom = 1
+    veil = 1
+    phase = 'black'
   }
 
   return {
@@ -147,6 +171,7 @@ function poseAt(ms: number): Frame {
     veil,
     playing: true,
     elapsed,
+    phase,
   }
 }
 
@@ -248,12 +273,14 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="intro-copy"
+      data-intro-phase={frame.playing ? frame.phase : 'idle'}
     >
       <div
         className="absolute inset-0 bg-white"
+        data-intro-phase={frame.playing ? frame.phase : 'idle'}
         style={{
           transform: frame.zoom > 0 ? `scale(${cam})` : undefined,
-          transformOrigin: '50% 68%',
+          transformOrigin: CAM_ORIGIN,
         }}
       >
         <div className="flex h-full flex-col items-center justify-center px-6">
@@ -265,8 +292,8 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
                 style={{
                   width: zoomHole * 2,
                   height: zoomHole * 2,
-                  top: '84%',
-                  transform: 'translate(-50%, -50%)',
+                  top: HOLE_TOP,
+                  transform: 'translate(-50%, -35%)',
                   boxShadow:
                     frame.zoom > 0
                       ? '0 0 0 2px rgba(255,255,255,0.18) inset'
@@ -289,7 +316,7 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
                 draggable={false}
                 className="pointer-events-none block h-auto w-[min(86vw,26rem)] select-none sm:w-[min(52vw,28rem)]"
                 style={{
-                  transformOrigin: '50% 88%',
+                  transformOrigin: RABBIT_ORIGIN,
                   transform: `translate(${frame.tx}px, ${frame.ty}px) rotate(${frame.rot}deg) scale(${frame.scaleX}, ${frame.scaleY})`,
                   opacity: frame.opacity,
                 }}
@@ -299,7 +326,7 @@ export default function RabbitIntro({ onComplete }: RabbitIntroProps) {
             {dirt.length > 0 && (
               <div
                 aria-hidden
-                className="pointer-events-none absolute bottom-[12%] left-1/2 z-30 h-0 w-0"
+                className="pointer-events-none absolute bottom-[5%] left-1/2 z-30 h-0 w-0"
               >
                 {dirt.map((p) => (
                   <span
