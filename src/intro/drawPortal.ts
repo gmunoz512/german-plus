@@ -21,8 +21,9 @@ const NEON = [
 
 const LAYER_COUNT = 26
 
-export function easeInCubic(t: number): number {
-  return t * t * t
+export function warpEase(t: number): number {
+  const x = Math.max(0, Math.min(1, t))
+  return x * x * (0.42 + 0.58 * x)
 }
 
 export function idlePortalRadius(width: number, height: number): number {
@@ -41,7 +42,7 @@ export function warpClipRadius(
 ): number {
   const idle = idlePortalRadius(width, height)
   const cover = coverRadius(width, height)
-  return idle + (cover - idle) * easeInCubic(warp)
+  return idle + (cover - idle) * warpEase(warp)
 }
 
 function roundedRectPath(
@@ -64,7 +65,7 @@ export function drawPortal(
   const { width: w, height: h, dpr, phase, breath, warp, reduced } = state
   const cx = w * 0.5
   const cy = h * 0.5
-  const ease = easeInCubic(warp)
+  const ease = warpEase(warp)
   const clipR = Math.max(1, warpClipRadius(w, h, warp))
   const cover = coverRadius(w, h)
 
@@ -120,8 +121,8 @@ export function drawPortal(
     const stagger = ((index * 13) % 7) / 7
     const y0 = py - hh * (1 + ease * 3.4)
     const y1 = py + hh * (1 + ease * 3.4)
-    const lw = 0.42 + z * 0.55
-    const alpha = 0.28 + z * 0.62
+    const lw = 0.5 + z * 0.55
+    const alpha = 0.4 + z * 0.55
 
     for (let c = 0; c < NEON.length; c++) {
       const col = NEON[c]
@@ -132,8 +133,8 @@ export function drawPortal(
         ctx.lineTo(x, y1)
       }
       if (z > 0.42 && warp < 0.85) {
-        ctx.strokeStyle = `rgba(${col.r},${col.g},${col.b},${alpha * 0.14})`
-        ctx.lineWidth = lw + 1.35
+        ctx.strokeStyle = `rgba(${col.r},${col.g},${col.b},${alpha * 0.2})`
+        ctx.lineWidth = lw + 1.55
         ctx.stroke()
         ctx.beginPath()
         for (let j = c; j < lineCount; j += NEON.length) {
@@ -172,8 +173,8 @@ export function drawPortal(
   }
 
   if (warp > 0) {
-    const holeT = Math.max(0, (warp - 0.06) / 0.94)
-    const holeR = 6 + easeInCubic(holeT) * cover * 1.12
+    const holeT = Math.max(0, (warp - 0.04) / 0.96)
+    const holeR = 4 + warpEase(holeT) * cover * 1.12
     ctx.globalCompositeOperation = 'destination-out'
     ctx.beginPath()
     ctx.arc(cx + pointerX * 3, cy + pointerY * 3, holeR, 0, TAU)

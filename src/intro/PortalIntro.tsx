@@ -34,6 +34,14 @@ function useReducedMotion() {
   return reduced
 }
 
+function readFrozenWarp(): number | null {
+  const raw = new URLSearchParams(window.location.search).get('introWarp')
+  if (raw == null || raw === '') return null
+  const n = Number(raw)
+  if (!Number.isFinite(n)) return null
+  return clamp(n, 0, 0.99)
+}
+
 function layoutFromWindow() {
   const width = window.innerWidth
   const height = window.innerHeight
@@ -47,14 +55,16 @@ function layoutFromWindow() {
 export default function PortalIntro({ onComplete }: PortalIntroProps) {
   const reduced = useReducedMotion()
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [warping, setWarping] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const [frozenWarp] = useState(readFrozenWarp)
+  const [warping, setWarping] = useState(frozenWarp != null)
   const [layout, setLayout] = useState(layoutFromWindow)
 
   const pointerTarget = useRef({ x: 0, y: 0 })
   const pointerAmt = useRef({ x: 0, y: 0 })
   const phaseRef = useRef(0)
   const lastT = useRef(0)
-  const warpingRef = useRef(false)
+  const warpingRef = useRef(frozenWarp != null)
   const warpStart = useRef(0)
   const finished = useRef(false)
   const reducedRef = useRef(reduced)
@@ -119,7 +129,10 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
       }
 
       let warp = 0
-      if (warpingRef.current) {
+      if (frozenWarp != null) {
+        warp = frozenWarp
+        warpingRef.current = true
+      } else if (warpingRef.current) {
         warp = clamp((now - warpStart.current) / WARP_MS, 0, 1)
         if (warp >= 1) {
           finish()
@@ -127,8 +140,15 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
         }
       }
 
+      const root = rootRef.current
+      if (root) {
+        root.dataset.introWarp = warp.toFixed(2)
+        root.dataset.introPhase = warp > 0 || warpingRef.current ? 'warp' : 'idle'
+      }
+
       if (!reduce) {
-        phaseRef.current += dt * (0.042 + warp * 2.15)
+        const rush = frozenWarp != null ? 0 : warp * 2.15
+        phaseRef.current += dt * (0.042 + rush)
       }
 
       const breath = reduce ? 0 : Math.sin((now / 1000) * (Math.PI * 2) / BREATH_PERIOD)
@@ -152,7 +172,7 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
 
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [finish])
+  }, [finish, frozenWarp])
 
   const beginWarp = useCallback(() => {
     if (warpingRef.current || finished.current) return
@@ -178,11 +198,13 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
 
   return (
     <div
+      ref={rootRef}
       className="fixed inset-0 z-50 select-none lowercase overscroll-none"
       role="dialog"
       aria-modal="true"
       aria-labelledby="intro-copy"
       data-intro-phase={warping ? 'warp' : 'idle'}
+      data-intro-warp="0.00"
       onPointerMove={onPointerMove}
     >
       <canvas
