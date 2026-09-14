@@ -395,7 +395,7 @@ export default function App() {
         <footer className="py-8 sm:py-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <p className="font-serif text-lg text-paper normal-case">german+</p>
-            <p className="mt-1 text-sm text-fog">new york · building stackd</p>
+            <p className="mt-1 text-sm text-fog">new york · building</p>
           </div>
           <div className="flex flex-wrap items-center gap-5">
             <a
