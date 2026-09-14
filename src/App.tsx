@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ArrowUpRight, ChevronDown, ExternalLink } from 'lucide-react'
+import { essays } from './essays'
 
 const pillars = [
   {
@@ -63,6 +64,7 @@ function StatusPill({ status }: { status: string }) {
 export default function App() {
   const [stackdOpen, setStackdOpen] = useState(false)
   const [marsOpen, setMarsOpen] = useState(false)
+  const [openEssay, setOpenEssay] = useState<string | null>(essays[0]?.id ?? null)
 
   return (
     <div className="min-h-svh bg-ink text-mist lowercase">
@@ -355,15 +357,66 @@ export default function App() {
               short writings from building to thoughts on the future of ai
             </p>
 
-            <div className="mt-6 rounded-2xl border border-dashed border-line bg-transparent px-6 py-8 sm:px-8">
-              <p className="text-[15px] leading-relaxed text-fog max-w-md">
-                nothing published yet. first ones will show up here as the
-                draft hardens.
-              </p>
-              <p className="mt-4 text-xs tracking-[0.18em] text-fog/80">
-                coming soon
-              </p>
-            </div>
+            <ul className="mt-6 space-y-0">
+              {essays.map((essay) => {
+                const isOpen = openEssay === essay.id
+                return (
+                  <li key={essay.id} className="border-t border-line-soft">
+                    <button
+                      type="button"
+                      aria-expanded={isOpen}
+                      onClick={() =>
+                        setOpenEssay((current) =>
+                          current === essay.id ? null : essay.id,
+                        )
+                      }
+                      className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                    >
+                      <div className="flex flex-wrap items-center gap-3">
+                        <h3 className="text-lg font-medium text-paper">
+                          {essay.title}
+                        </h3>
+                        <span className="text-xs text-fog tracking-wider">
+                          {essay.date}
+                        </span>
+                        <ChevronDown
+                          className={`ml-auto size-4 text-fog transition-transform duration-200 ${
+                            isOpen ? 'rotate-180' : ''
+                          }`}
+                          aria-hidden
+                        />
+                      </div>
+                      {!isOpen && (
+                        <p className="mt-2 text-[15px] leading-relaxed text-fog max-w-xl">
+                          {essay.paragraphs[0]}
+                        </p>
+                      )}
+                      <span className="mt-3 inline-flex items-center gap-1 text-sm text-accent">
+                        {isOpen ? 'close' : 'read'}
+                        <ChevronDown
+                          className={`size-3.5 transition-transform duration-200 ${
+                            isOpen ? 'rotate-180' : ''
+                          }`}
+                          aria-hidden
+                        />
+                      </span>
+                    </button>
+
+                    {isOpen && (
+                      <div className="pb-6 -mx-3 px-3">
+                        <article className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
+                          <div className="space-y-4 max-w-xl text-[15px] sm:text-base leading-relaxed text-fog">
+                            {essay.paragraphs.map((paragraph) => (
+                              <p key={paragraph}>{paragraph}</p>
+                            ))}
+                          </div>
+                        </article>
+                      </div>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
           </section>
           </div>
         </main>
