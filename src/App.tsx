@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { ArrowUpRight, ChevronDown, ExternalLink } from 'lucide-react'
 import { essays } from './essays'
+import PortalIntro from './intro/PortalIntro'
+import { shouldPlayIntro } from './intro/storage'
 
 const pillars = [
   {
@@ -65,9 +67,17 @@ export default function App() {
   const [stackdOpen, setStackdOpen] = useState(false)
   const [marsOpen, setMarsOpen] = useState(false)
   const [openEssay, setOpenEssay] = useState<string | null>(null)
+  const [introDone, setIntroDone] = useState(() => !shouldPlayIntro())
 
   return (
-    <div className="min-h-svh bg-ink text-mist lowercase">
+    <>
+      {!introDone && (
+        <PortalIntro onComplete={() => setIntroDone(true)} />
+      )}
+    <div
+      className="min-h-svh bg-ink text-mist lowercase"
+      {...(!introDone ? { inert: true, 'aria-hidden': true } : {})}
+    >
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,165,116,0.06),_transparent_55%)]"
@@ -449,5 +459,6 @@ export default function App() {
         </footer>
       </div>
     </div>
+    </>
   )
 }
