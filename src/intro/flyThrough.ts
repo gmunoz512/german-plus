@@ -136,9 +136,7 @@ export function attachFlyThrough(
   const fields: DustField[] = []
 
   const moteTex = makeSoftDiscTexture(64, 0.2)
-  const hazeTex = makeSoftDiscTexture(128, 0.1)
   if (moteTex) textures.push(moteTex)
-  if (hazeTex) textures.push(hazeTex)
 
   const rng = mulberry32(0x51e7)
 
@@ -185,28 +183,6 @@ export function attachFlyThrough(
   )
   addPoints(mobile ? 55 : 90, 0.95, mobile ? 0.09 : 0.078, 0xd4a574, 0.28)
   addPoints(mobile ? 36 : 64, 2.05, mobile ? 0.12 : 0.1, 0xb8b8c0, 0.34)
-
-  if (hazeTex) {
-    const hazeCount = mobile ? 5 : 7
-    const hazeMat = new THREE.SpriteMaterial({
-      map: hazeTex,
-      color: 0x3a3a40,
-      transparent: true,
-      opacity: 0.18,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-      fog: true,
-    })
-    materials.push(hazeMat)
-    for (let i = 0; i < hazeCount; i++) {
-      const sprite = new THREE.Sprite(hazeMat)
-      const z = -0.9 - i * 2.05
-      const s = 2.6 + (i % 3) * 0.7
-      sprite.position.set((rng() - 0.5) * 0.9, (rng() - 0.5) * 0.7, z)
-      sprite.scale.set(s * 1.4, s, 1)
-      scene.add(sprite)
-    }
-  }
 
   const lookTarget = new THREE.Vector3()
   let lastW = 0

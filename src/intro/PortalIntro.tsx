@@ -39,7 +39,6 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
   const reduced = useReducedMotion()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
-  const fieldRef = useRef<HTMLDivElement>(null)
   const [frozenWarp] = useState(readFrozenWarp)
   const finished = useRef(false)
   const reducedRef = useRef(reduced)
@@ -151,13 +150,6 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
         root.dataset.introSkip = opacity < 0.28 ? '1' : '0'
       }
 
-      const field = fieldRef.current
-      if (field) {
-        const scale = 1 + warpEaseScale(warp)
-        field.style.transform = `scale(${scale.toFixed(4)})`
-        field.style.opacity = String(0.9 - warp * 0.28)
-      }
-
       if (frozenWarp == null && !reduce && opacity <= 0.01) {
         finish()
         return
@@ -204,22 +196,11 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
         aria-hidden
       />
       <div
-        ref={fieldRef}
-        className="pointer-events-none absolute inset-0 origin-center"
-        aria-hidden
-        style={{
-          background:
-            'radial-gradient(ellipse at 50% 42%, rgba(36,36,40,0.5) 0%, rgba(10,10,11,0) 54%)',
-          transform: 'scale(1)',
-          opacity: 0.9,
-        }}
-      />
-      <div
         className="pointer-events-none absolute inset-0"
         aria-hidden
         style={{
           background:
-            'radial-gradient(ellipse at 50% 48%, transparent 26%, rgba(10,10,11,0.42) 68%, rgba(10,10,11,0.9) 100%)',
+            'radial-gradient(ellipse at 50% 48%, transparent 38%, rgba(10,10,11,0.55) 100%)',
         }}
       />
       {frozenWarp == null && (
@@ -233,8 +214,4 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
       )}
     </div>
   )
-}
-
-function warpEaseScale(warp: number) {
-  return warp * 0.55 + warp * warp * 1.15
 }
