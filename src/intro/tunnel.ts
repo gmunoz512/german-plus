@@ -11,10 +11,12 @@ export function smoothstep(edge0: number, edge1: number, x: number) {
   return t * t * (3 - 2 * t)
 }
 
-/** Ease-in: slow cruise, then accelerate into the opening. */
+/** Cruise through rings/globe, then ease-in accelerate into the opening. */
 export function warpEase(t: number): number {
   const x = clamp(t, 0, 1)
-  return x * x * (0.38 + 0.62 * x)
+  if (x < 0.7) return (x / 0.7) * 0.58
+  const u = (x - 0.7) / 0.3
+  return 0.58 + 0.42 * u * u
 }
 
 export function readFrozenWarp(): number | null {
