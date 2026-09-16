@@ -31,3 +31,11 @@ export function shouldPlayIntro(): boolean {
   }
   return true
 }
+
+export function readFrozenWarp(): number | null {
+  const raw = new URLSearchParams(window.location.search).get('introWarp')
+  if (raw == null || raw === '') return null
+  const n = Number(raw)
+  if (!Number.isFinite(n)) return null
+  return Math.max(0, Math.min(0.99, n))
+}

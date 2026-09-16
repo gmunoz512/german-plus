@@ -1,22 +1,26 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type PointerEvent,
-} from 'react'
-import { attachFlyThrough, titleOpacity } from './flyThrough'
-import { markIntroComplete } from './storage'
-import {
-  FLY_MS,
-  HOLD_MS,
-  INTRO_MS,
-  clamp,
-  readFrozenWarp,
-} from './tunnel'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { markIntroComplete, readFrozenWarp } from './storage'
 
 type PortalIntroProps = {
   onComplete: () => void
+}
+
+const HOLD_MS = 280
+const FADE_MS = 1100
+const INTRO_MS = HOLD_MS + FADE_MS
+
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n))
+}
+
+function easeOutCubic(t: number) {
+  const x = clamp(t, 0, 1)
+  return 1 - (1 - x) ** 3
+}
+
+function opacityFromElapsed(elapsed: number) {
+  if (elapsed <= HOLD_MS) return 1
+  return 1 - easeOutCubic((elapsed - HOLD_MS) / FADE_MS)
 }
 
 function useReducedMotion() {
@@ -36,19 +40,9 @@ function useReducedMotion() {
 
 export default function PortalIntro({ onComplete }: PortalIntroProps) {
   const reduced = useReducedMotion()
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
-  const titleRef = useRef<HTMLDivElement>(null)
   const [frozenWarp] = useState(readFrozenWarp)
   const finished = useRef(false)
-  const reducedRef = useRef(reduced)
-  const pointerTarget = useRef({ x: 0, y: 0 })
-  const pointerAmt = useRef({ x: 0, y: 0 })
-  const originT = useRef(0)
-
-  useEffect(() => {
-    reducedRef.current = reduced
-  }, [reduced])
 
   const finish = useCallback(() => {
     if (finished.current) return
@@ -81,82 +75,33 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
   }, [finish, frozenWarp])
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const renderer = attachFlyThrough(canvas)
-    if (!renderer) {
-      finish()
-      return
-    }
-
     let raf = 0
-    originT.current = 0
+    let origin = 0
     const failsafe =
       frozenWarp == null
         ? window.setTimeout(() => finish(), INTRO_MS + 200)
         : 0
 
-    const onLost = (event: Event) => {
-      event.preventDefault()
-      finish()
-    }
-    canvas.addEventListener('webglcontextlost', onLost)
-
     const tick = (now: number) => {
       if (finished.current) return
-      if (!originT.current) originT.current = now
+      if (!origin) origin = now
 
-      const width = window.innerWidth
-      const height = window.innerHeight
-      const dpr = Math.min(width < 720 ? 1.5 : 2, window.devicePixelRatio || 1)
-      const reduce = reducedRef.current
-
-      let warp = 0
-      if (frozenWarp != null) {
-        warp = frozenWarp
-      } else if (!reduce) {
-        const elapsed = now - originT.current
-        warp = clamp((elapsed - HOLD_MS) / FLY_MS, 0, 1)
-      }
-
-      if (!reduce && frozenWarp == null) {
-        pointerAmt.current.x +=
-          (pointerTarget.current.x - pointerAmt.current.x) * 0.08
-        pointerAmt.current.y +=
-          (pointerTarget.current.y - pointerAmt.current.y) * 0.08
-      } else {
-        pointerAmt.current.x = 0
-        pointerAmt.current.y = 0
-      }
-
-      renderer.render({
-        width,
-        height,
-        dpr,
-        warp,
-        pointerX: pointerAmt.current.x,
-        pointerY: pointerAmt.current.y,
-        now: frozenWarp != null ? frozenWarp * 8000 : now,
-      })
-
-      const title = titleRef.current
-      if (title) title.style.opacity = String(titleOpacity(warp))
+      const opacity =
+        frozenWarp != null
+          ? 1 - frozenWarp
+          : opacityFromElapsed(now - origin)
 
       const root = rootRef.current
       if (root) {
-        root.style.backgroundColor = 'transparent'
-        root.dataset.introWarp = warp.toFixed(2)
-        root.dataset.introPhase = warp > 0 ? 'warp' : 'idle'
-        root.dataset.introRenderer = renderer.kind
-        root.dataset.introSkip = warp > 0.72 ? '1' : '0'
+        root.style.opacity = String(clamp(opacity, 0, 1))
+        root.dataset.introWarp = (1 - clamp(opacity, 0, 1)).toFixed(2)
+        root.dataset.introPhase = opacity >= 0.999 ? 'hold' : 'fade'
+        root.dataset.introSkip = opacity < 0.28 ? '1' : '0'
       }
 
-      if (frozenWarp == null && !reduce) {
-        if (warp >= 1 || renderer.coversViewport()) {
-          finish()
-          return
-        }
+      if (frozenWarp == null && opacity <= 0.01) {
+        finish()
+        return
       }
 
       raf = requestAnimationFrame(tick)
@@ -166,51 +111,21 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
     return () => {
       cancelAnimationFrame(raf)
       if (failsafe) window.clearTimeout(failsafe)
-      canvas.removeEventListener('webglcontextlost', onLost)
-      renderer.destroy()
     }
   }, [finish, frozenWarp])
-
-  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    if (reduced || frozenWarp != null) return
-    if (event.pointerType === 'touch') return
-    pointerTarget.current = {
-      x: clamp((event.clientX / window.innerWidth - 0.5) * 2, -1, 1),
-      y: clamp((event.clientY / window.innerHeight - 0.5) * 2, -1, 1),
-    }
-  }
 
   return (
     <div
       ref={rootRef}
-      className="group fixed inset-0 z-50 select-none overscroll-none bg-[#141414]"
+      className="group fixed inset-0 z-50 select-none overscroll-none bg-ink"
       role="dialog"
       aria-modal="true"
       aria-label="entering german+"
-      data-intro-phase="idle"
+      data-intro-phase="hold"
       data-intro-warp="0.00"
       data-intro-skip="0"
-      data-intro-renderer="webgl"
-      onPointerMove={onPointerMove}
+      style={{ opacity: 1 }}
     >
-      <canvas
-        ref={canvasRef}
-        className="pointer-events-none absolute inset-0 h-full w-full bg-[#141414]"
-        aria-hidden
-      />
-      <div
-        ref={titleRef}
-        className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
-        style={{ opacity: 0 }}
-        aria-hidden
-      >
-        <div className="text-center">
-          <p className="font-serif text-[15px] leading-none tracking-wide text-white/80 normal-case">
-            german+
-          </p>
-          <span className="mx-auto mt-2 block h-px w-7 bg-white/55" />
-        </div>
-      </div>
       {frozenWarp == null && (
         <button
           type="button"
