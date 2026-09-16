@@ -1,26 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent,
+} from 'react'
+import { attachFlyThrough } from './flyThrough'
 import { markIntroComplete, readFrozenWarp } from './storage'
+import {
+  FADE_START,
+  FLY_MS,
+  HOLD_MS,
+  INTRO_MS,
+  clamp,
+  overlayOpacity,
+} from './tunnel'
 
 type PortalIntroProps = {
   onComplete: () => void
-}
-
-const HOLD_MS = 280
-const FADE_MS = 1100
-const INTRO_MS = HOLD_MS + FADE_MS
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n))
-}
-
-function easeOutCubic(t: number) {
-  const x = clamp(t, 0, 1)
-  return 1 - (1 - x) ** 3
-}
-
-function opacityFromElapsed(elapsed: number) {
-  if (elapsed <= HOLD_MS) return 1
-  return 1 - easeOutCubic((elapsed - HOLD_MS) / FADE_MS)
 }
 
 function useReducedMotion() {
@@ -40,9 +37,19 @@ function useReducedMotion() {
 
 export default function PortalIntro({ onComplete }: PortalIntroProps) {
   const reduced = useReducedMotion()
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
+  const fieldRef = useRef<HTMLDivElement>(null)
   const [frozenWarp] = useState(readFrozenWarp)
   const finished = useRef(false)
+  const reducedRef = useRef(reduced)
+  const pointerTarget = useRef({ x: 0, y: 0 })
+  const pointerAmt = useRef({ x: 0, y: 0 })
+  const originT = useRef(0)
+
+  useEffect(() => {
+    reducedRef.current = reduced
+  }, [reduced])
 
   const finish = useCallback(() => {
     if (finished.current) return
@@ -75,31 +82,83 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
   }, [finish, frozenWarp])
 
   useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const renderer = attachFlyThrough(canvas)
+    if (!renderer) {
+      finish()
+      return
+    }
+
     let raf = 0
-    let origin = 0
+    originT.current = 0
     const failsafe =
       frozenWarp == null
         ? window.setTimeout(() => finish(), INTRO_MS + 200)
         : 0
 
+    const onLost = (event: Event) => {
+      event.preventDefault()
+      finish()
+    }
+    canvas.addEventListener('webglcontextlost', onLost)
+
     const tick = (now: number) => {
       if (finished.current) return
-      if (!origin) origin = now
+      if (!originT.current) originT.current = now
 
-      const opacity =
-        frozenWarp != null
-          ? 1 - frozenWarp
-          : opacityFromElapsed(now - origin)
+      const width = window.innerWidth
+      const height = window.innerHeight
+      const dpr = Math.min(width < 720 ? 1.5 : 2, window.devicePixelRatio || 1)
+      const reduce = reducedRef.current
 
+      let warp = 0
+      if (frozenWarp != null) {
+        warp = frozenWarp
+      } else if (!reduce) {
+        const elapsed = now - originT.current
+        warp = clamp((elapsed - HOLD_MS) / FLY_MS, 0, 1)
+      }
+
+      if (!reduce && frozenWarp == null) {
+        pointerAmt.current.x +=
+          (pointerTarget.current.x - pointerAmt.current.x) * 0.08
+        pointerAmt.current.y +=
+          (pointerTarget.current.y - pointerAmt.current.y) * 0.08
+      } else {
+        pointerAmt.current.x = 0
+        pointerAmt.current.y = 0
+      }
+
+      renderer.render({
+        width,
+        height,
+        dpr,
+        warp,
+        pointerX: pointerAmt.current.x,
+        pointerY: pointerAmt.current.y,
+      })
+
+      const opacity = overlayOpacity(warp)
       const root = rootRef.current
       if (root) {
-        root.style.opacity = String(clamp(opacity, 0, 1))
-        root.dataset.introWarp = (1 - clamp(opacity, 0, 1)).toFixed(2)
-        root.dataset.introPhase = opacity >= 0.999 ? 'hold' : 'fade'
+        root.style.opacity = String(opacity)
+        root.dataset.introWarp = warp.toFixed(2)
+        root.dataset.introPhase =
+          warp <= 0.001 ? 'hold' : warp < FADE_START ? 'fall' : 'fade'
+        root.dataset.introRenderer = renderer.kind
         root.dataset.introSkip = opacity < 0.28 ? '1' : '0'
       }
 
-      if (frozenWarp == null && opacity <= 0.01) {
+      const field = fieldRef.current
+      if (field) {
+        const scale = 1 + warpEaseScale(warp)
+        field.style.transform = `scale(${scale.toFixed(4)})`
+        field.style.opacity = String(0.9 - warp * 0.28)
+      }
+
+      if (frozenWarp == null && !reduce && opacity <= 0.01) {
         finish()
         return
       }
@@ -111,8 +170,19 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
     return () => {
       cancelAnimationFrame(raf)
       if (failsafe) window.clearTimeout(failsafe)
+      canvas.removeEventListener('webglcontextlost', onLost)
+      renderer.destroy()
     }
   }, [finish, frozenWarp])
+
+  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (reduced || frozenWarp != null) return
+    if (event.pointerType === 'touch') return
+    pointerTarget.current = {
+      x: clamp((event.clientX / window.innerWidth - 0.5) * 2, -1, 1),
+      y: clamp((event.clientY / window.innerHeight - 0.5) * 2, -1, 1),
+    }
+  }
 
   return (
     <div
@@ -124,8 +194,34 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
       data-intro-phase="hold"
       data-intro-warp="0.00"
       data-intro-skip="0"
+      data-intro-renderer="webgl"
+      onPointerMove={onPointerMove}
       style={{ opacity: 1 }}
     >
+      <canvas
+        ref={canvasRef}
+        className="pointer-events-none absolute inset-0 h-full w-full bg-ink"
+        aria-hidden
+      />
+      <div
+        ref={fieldRef}
+        className="pointer-events-none absolute inset-0 origin-center"
+        aria-hidden
+        style={{
+          background:
+            'radial-gradient(ellipse at 50% 42%, rgba(36,36,40,0.5) 0%, rgba(10,10,11,0) 54%)',
+          transform: 'scale(1)',
+          opacity: 0.9,
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden
+        style={{
+          background:
+            'radial-gradient(ellipse at 50% 48%, transparent 26%, rgba(10,10,11,0.42) 68%, rgba(10,10,11,0.9) 100%)',
+        }}
+      />
       {frozenWarp == null && (
         <button
           type="button"
@@ -137,4 +233,8 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
       )}
     </div>
   )
+}
+
+function warpEaseScale(warp: number) {
+  return warp * 0.55 + warp * warp * 1.15
 }
