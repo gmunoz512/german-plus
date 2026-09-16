@@ -5,15 +5,13 @@ import {
   useState,
   type PointerEvent,
 } from 'react'
-import { attachTunnelRenderer } from './drawTunnel'
+import { attachFlyThrough, titleOpacity } from './flyThrough'
 import { markIntroComplete } from './storage'
 import {
   FLY_MS,
   HOLD_MS,
   INTRO_MS,
-  camZFromWarp,
   clamp,
-  panelCoversViewport,
   readFrozenWarp,
 } from './tunnel'
 
@@ -40,13 +38,12 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
   const reduced = useReducedMotion()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
+  const titleRef = useRef<HTMLDivElement>(null)
   const [frozenWarp] = useState(readFrozenWarp)
   const finished = useRef(false)
   const reducedRef = useRef(reduced)
   const pointerTarget = useRef({ x: 0, y: 0 })
   const pointerAmt = useRef({ x: 0, y: 0 })
-  const phaseRef = useRef(0)
-  const lastT = useRef(0)
   const originT = useRef(0)
 
   useEffect(() => {
@@ -87,20 +84,28 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const renderer = attachTunnelRenderer(canvas)
+    const renderer = attachFlyThrough(canvas)
+    if (!renderer) {
+      finish()
+      return
+    }
+
     let raf = 0
     originT.current = 0
-    lastT.current = 0
     const failsafe =
       frozenWarp == null
         ? window.setTimeout(() => finish(), INTRO_MS + 200)
         : 0
 
+    const onLost = (event: Event) => {
+      event.preventDefault()
+      finish()
+    }
+    canvas.addEventListener('webglcontextlost', onLost)
+
     const tick = (now: number) => {
       if (finished.current) return
       if (!originT.current) originT.current = now
-      const dt = lastT.current ? Math.min(0.05, (now - lastT.current) / 1000) : 0
-      lastT.current = now
 
       const width = window.innerWidth
       const height = window.innerHeight
@@ -120,28 +125,23 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
           (pointerTarget.current.x - pointerAmt.current.x) * 0.08
         pointerAmt.current.y +=
           (pointerTarget.current.y - pointerAmt.current.y) * 0.08
-        const rush = 0.035 + warp * 0.55
-        phaseRef.current += dt * rush
       } else {
         pointerAmt.current.x = 0
         pointerAmt.current.y = 0
       }
-
-      const pointerFade = 1 - warp
-      const breath = reduce
-        ? 0
-        : Math.sin((now / 1000) * ((Math.PI * 2) / 5.4))
 
       renderer.render({
         width,
         height,
         dpr,
         warp,
-        phase: phaseRef.current,
-        breath,
-        pointerX: pointerAmt.current.x * pointerFade,
-        pointerY: pointerAmt.current.y * pointerFade,
+        pointerX: pointerAmt.current.x,
+        pointerY: pointerAmt.current.y,
+        now: frozenWarp != null ? frozenWarp * 8000 : now,
       })
+
+      const title = titleRef.current
+      if (title) title.style.opacity = String(titleOpacity(warp))
 
       const root = rootRef.current
       if (root) {
@@ -153,8 +153,7 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
       }
 
       if (frozenWarp == null && !reduce) {
-        const camZ = camZFromWarp(warp)
-        if (warp >= 1 || panelCoversViewport(width, height, warp, camZ)) {
+        if (warp >= 1 || renderer.coversViewport()) {
           finish()
           return
         }
@@ -167,6 +166,7 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
     return () => {
       cancelAnimationFrame(raf)
       if (failsafe) window.clearTimeout(failsafe)
+      canvas.removeEventListener('webglcontextlost', onLost)
       renderer.destroy()
     }
   }, [finish, frozenWarp])
@@ -183,20 +183,34 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
   return (
     <div
       ref={rootRef}
-      className="group fixed inset-0 z-50 select-none overscroll-none bg-[#1a1a1a]"
+      className="group fixed inset-0 z-50 select-none overscroll-none bg-[#141414]"
       role="dialog"
       aria-modal="true"
       aria-label="entering german+"
       data-intro-phase="idle"
       data-intro-warp="0.00"
       data-intro-skip="0"
+      data-intro-renderer="webgl"
       onPointerMove={onPointerMove}
     >
       <canvas
         ref={canvasRef}
-        className="pointer-events-none absolute inset-0 h-full w-full"
+        className="pointer-events-none absolute inset-0 h-full w-full bg-[#141414]"
         aria-hidden
       />
+      <div
+        ref={titleRef}
+        className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
+        style={{ opacity: 0 }}
+        aria-hidden
+      >
+        <div className="text-center">
+          <p className="font-serif text-[15px] leading-none tracking-wide text-white/80 normal-case">
+            german+
+          </p>
+          <span className="mx-auto mt-2 block h-px w-7 bg-white/55" />
+        </div>
+      </div>
       {frozenWarp == null && (
         <button
           type="button"
