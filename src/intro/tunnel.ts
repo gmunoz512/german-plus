@@ -1,57 +1,66 @@
-export const HOLD_MS = 380
-export const FLY_MS = 4620
+export const HOLD_MS = 220
+export const FLY_MS = 4780
 export const INTRO_MS = HOLD_MS + FLY_MS
 
-export const END_Z = 12
-export const FOCAL = 1.92
-export const OPEN_R = 1
-export const TUNNEL_R = 1.08
+export const END_Z = 10.2
+export const GLOBE_Z = 6.35
+export const PANEL_Z = 10.35
+export const PANEL_W = 4.15
+export const PANEL_H = 2.05
 
 export function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n))
 }
 
+export function smoothstep(edge0: number, edge1: number, x: number) {
+  const t = clamp((x - edge0) / (edge1 - edge0), 0, 1)
+  return t * t * (3 - 2 * t)
+}
+
+export function minDim(width: number, height: number) {
+  return Math.min(width, height)
+}
+
+export function focalLength(width: number, height: number) {
+  return minDim(width, height) * 0.82
+}
+
 export function warpEase(t: number): number {
   const x = clamp(t, 0, 1)
-  // Cinematic ease-in: long crawl, then a committed rush through the opening.
-  return x ** 2.7
+  return x ** 1.42
 }
 
 export function camZFromWarp(warp: number): number {
   return END_Z * warpEase(warp)
 }
 
-export function minDim(width: number, height: number): number {
-  return Math.min(width, height)
+export function panelScale(width: number, height: number, warp: number, camZ: number) {
+  const f = focalLength(width, height)
+  const depth = Math.max(0.045, PANEL_Z - camZ)
+  const approach = f / depth
+  const door = smoothstep(0.74, 1, warp) ** 1.55
+  return approach * (0.05 + 0.95 * door)
 }
 
-export function apertureRadius(
+export function panelScreenSize(
   width: number,
   height: number,
+  warp: number,
   camZ: number,
-  breath: number,
-): number {
-  const rel = Math.max(0.018, END_Z - camZ)
-  return (FOCAL * OPEN_R * minDim(width, height) * (1 + breath * 0.012)) / rel
+) {
+  const s = panelScale(width, height, warp, camZ)
+  return { w: PANEL_W * s, h: PANEL_H * s }
 }
 
-export function coverRadius(width: number, height: number): number {
-  return Math.hypot(width, height) * 0.5 + 12
-}
-
-export function apertureCoversViewport(
+export function panelCoversViewport(
   width: number,
   height: number,
+  warp: number,
   camZ: number,
-  breath: number,
-): boolean {
-  return apertureRadius(width, height, camZ, breath) >= coverRadius(width, height)
-}
-
-export function flySpeed(warp: number): number {
-  const x = clamp(warp, 0, 1)
-  // Derivative-ish of x^2.7, normalized to ~0–1 for blur/streaks.
-  return clamp(2.7 * x ** 1.7, 0, 1.35)
+) {
+  if (warp < 0.9) return false
+  const p = panelScreenSize(width, height, warp, camZ)
+  return p.w >= width * 1.03 && p.h >= height * 1.03
 }
 
 export function readFrozenWarp(): number | null {

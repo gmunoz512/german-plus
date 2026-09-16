@@ -11,9 +11,9 @@ import {
   FLY_MS,
   HOLD_MS,
   INTRO_MS,
-  apertureCoversViewport,
   camZFromWarp,
   clamp,
+  panelCoversViewport,
   readFrozenWarp,
 } from './tunnel'
 
@@ -149,12 +149,12 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
         root.dataset.introWarp = warp.toFixed(2)
         root.dataset.introPhase = warp > 0 ? 'warp' : 'idle'
         root.dataset.introRenderer = renderer.kind
-        root.dataset.introSkip = warp > 0.38 ? '1' : '0'
+        root.dataset.introSkip = warp > 0.72 ? '1' : '0'
       }
 
       if (frozenWarp == null && !reduce) {
         const camZ = camZFromWarp(warp)
-        if (warp >= 1 || apertureCoversViewport(width, height, camZ, breath)) {
+        if (warp >= 1 || panelCoversViewport(width, height, warp, camZ)) {
           finish()
           return
         }
@@ -183,7 +183,7 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
   return (
     <div
       ref={rootRef}
-      className="group fixed inset-0 z-50 select-none overscroll-none bg-black"
+      className="group fixed inset-0 z-50 select-none overscroll-none bg-[#1a1a1a]"
       role="dialog"
       aria-modal="true"
       aria-label="entering german+"
@@ -201,7 +201,7 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
         <button
           type="button"
           onClick={finish}
-          className="absolute bottom-6 right-6 z-20 text-xs tracking-wide text-white/35 transition-opacity duration-200 hover:text-white/80 group-data-[intro-skip=1]:pointer-events-none group-data-[intro-skip=1]:opacity-0"
+          className="absolute bottom-6 right-6 z-20 text-xs tracking-wide text-white/30 transition-opacity duration-200 hover:text-white/70 group-data-[intro-skip=1]:pointer-events-none group-data-[intro-skip=1]:opacity-0"
         >
           skip
         </button>
