@@ -5,7 +5,7 @@ import {
   useState,
   type PointerEvent,
 } from 'react'
-import { attachFlyThrough } from './flyThrough'
+import { attachFallRenderer } from './flyThrough'
 import { markIntroComplete, readFrozenWarp } from './storage'
 import {
   FADE_START,
@@ -85,7 +85,7 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const renderer = attachFlyThrough(canvas)
+    const renderer = attachFallRenderer(canvas)
     if (!renderer) {
       finish()
       return

@@ -11,20 +11,20 @@ export type FlyDrawState = {
 }
 
 export type FlyThroughRenderer = {
-  kind: 'webgl'
+  kind: 'webgl' | 'canvas2d'
   render: (state: FlyDrawState) => void
   destroy: () => void
 }
 
 const BG = 0x0a0a0b
 const TAU = Math.PI * 2
-const CAM_START_Z = 0.42
-const CAM_END_Z = -16.4
-const CAM_START_Y = 0.06
-const CAM_END_Y = -0.42
-const FOV_START = 46
-const FOV_END = 58
-const DEPTH_SPAN = 14.5
+const CAM_START_Z = 0.55
+const CAM_END_Z = -15.2
+const CAM_START_Y = 0.05
+const CAM_END_Y = -0.38
+const FOV_START = 47
+const FOV_END = 60
+const DEPTH_SPAN = 13.6
 
 function mulberry32(seed: number) {
   let a = seed >>> 0
@@ -67,14 +67,14 @@ function scatterInTube(
     const a = rng() * TAU
     const rad = Math.sqrt(rng()) * radius
     pos[i * 3] = Math.cos(a) * rad
-    pos[i * 3 + 1] = (rng() - 0.5) * radius * 1.15
+    pos[i * 3 + 1] = (rng() - 0.5) * radius * 1.05
     pos[i * 3 + 2] = z0 + rng() * (z1 - z0)
   }
   return pos
 }
 
 function wrapZ(pos: Float32Array, camZ: number) {
-  const near = camZ + 0.85
+  const near = camZ + 0.7
   const far = camZ - DEPTH_SPAN
   const span = near - far
   for (let i = 2; i < pos.length; i += 3) {
@@ -125,9 +125,9 @@ export function attachFlyThrough(
 
   const scene = new THREE.Scene()
   scene.background = new THREE.Color(BG)
-  scene.fog = new THREE.Fog(BG, 1.05, 8.8)
+  scene.fog = new THREE.Fog(BG, 0.55, 7.4)
 
-  const camera = new THREE.PerspectiveCamera(FOV_START, 1, 0.05, 40)
+  const camera = new THREE.PerspectiveCamera(FOV_START, 1, 0.04, 36)
   camera.position.set(0, CAM_START_Y, CAM_START_Z)
 
   const geometries: THREE.BufferGeometry[] = []
@@ -135,8 +135,8 @@ export function attachFlyThrough(
   const textures: THREE.Texture[] = []
   const fields: DustField[] = []
 
-  const moteTex = makeSoftDiscTexture(64, 0.18)
-  const hazeTex = makeSoftDiscTexture(128, 0.08)
+  const moteTex = makeSoftDiscTexture(64, 0.2)
+  const hazeTex = makeSoftDiscTexture(128, 0.1)
   if (moteTex) textures.push(moteTex)
   if (hazeTex) textures.push(hazeTex)
 
@@ -153,8 +153,8 @@ export function attachFlyThrough(
       rng,
       count,
       radius,
-      CAM_END_Z - 1.2,
-      CAM_START_Z + 0.6,
+      CAM_END_Z - 0.8,
+      CAM_START_Z + 0.35,
     )
     const geo = new THREE.BufferGeometry()
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3))
@@ -164,7 +164,6 @@ export function attachFlyThrough(
       size,
       sizeAttenuation: true,
       map: moteTex,
-      alphaMap: moteTex,
       transparent: true,
       opacity,
       depthWrite: false,
@@ -178,33 +177,33 @@ export function attachFlyThrough(
   }
 
   addPoints(
-    mobile ? 140 : 280,
-    2.55,
-    mobile ? 0.028 : 0.022,
-    0xcbc7bf,
-    0.42,
+    mobile ? 170 : 340,
+    1.45,
+    mobile ? 0.055 : 0.048,
+    0xddd9d1,
+    0.7,
   )
-  addPoints(mobile ? 50 : 90, 1.85, mobile ? 0.05 : 0.04, 0xd4a574, 0.16)
-  addPoints(mobile ? 28 : 48, 3.1, mobile ? 0.07 : 0.055, 0x9a9aa3, 0.22)
+  addPoints(mobile ? 55 : 90, 0.95, mobile ? 0.09 : 0.078, 0xd4a574, 0.28)
+  addPoints(mobile ? 36 : 64, 2.05, mobile ? 0.12 : 0.1, 0xb8b8c0, 0.34)
 
   if (hazeTex) {
-    const hazeCount = mobile ? 6 : 8
+    const hazeCount = mobile ? 5 : 7
     const hazeMat = new THREE.SpriteMaterial({
       map: hazeTex,
-      color: 0x1c1c20,
+      color: 0x3a3a40,
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.18,
       depthWrite: false,
-      blending: THREE.NormalBlending,
+      blending: THREE.AdditiveBlending,
       fog: true,
     })
     materials.push(hazeMat)
     for (let i = 0; i < hazeCount; i++) {
       const sprite = new THREE.Sprite(hazeMat)
-      const z = -1.1 - i * 1.85
-      const s = 3.4 + (i % 3) * 0.55
-      sprite.position.set((rng() - 0.5) * 0.55, (rng() - 0.5) * 0.4, z)
-      sprite.scale.set(s * 1.35, s, 1)
+      const z = -0.9 - i * 2.05
+      const s = 2.6 + (i % 3) * 0.7
+      sprite.position.set((rng() - 0.5) * 0.9, (rng() - 0.5) * 0.7, z)
+      sprite.scale.set(s * 1.4, s, 1)
       scene.add(sprite)
     }
   }
@@ -216,15 +215,15 @@ export function attachFlyThrough(
 
   const applyPose = (state: FlyDrawState) => {
     const t = warpEase(state.warp)
-    const fall = smoothstep(0.08, 1, t)
+    const fall = smoothstep(0.06, 1, t)
     const z = THREE.MathUtils.lerp(CAM_START_Z, CAM_END_Z, t)
     const y =
       THREE.MathUtils.lerp(CAM_START_Y, CAM_END_Y, fall) +
       state.pointerY * 0.07 * (1 - state.warp)
     const x = state.pointerX * 0.11 * (1 - state.warp)
     camera.position.set(x, y, z)
-    lookTarget.set(x * 0.18, y - 0.22 - fall * 0.28, z - 3.2)
-    camera.up.set(Math.sin(fall * Math.PI) * 0.02, 1, 0)
+    lookTarget.set(x * 0.16, y - 0.2 - fall * 0.32, z - 3.1)
+    camera.up.set(Math.sin(fall * Math.PI) * 0.018, 1, 0)
     camera.lookAt(lookTarget)
     camera.fov = THREE.MathUtils.lerp(FOV_START, FOV_END, fall * fall)
     camera.updateProjectionMatrix()
@@ -258,4 +257,96 @@ export function attachFlyThrough(
       for (const tex of textures) tex.dispose()
     },
   }
+}
+
+type Speck = { x: number; y: number; z0: number; c: string; s: number }
+
+/** Canvas 2D starfield-style fall if WebGL is unavailable. */
+export function attachFall2D(
+  canvas: HTMLCanvasElement,
+): FlyThroughRenderer | null {
+  const ctx = canvas.getContext('2d', { alpha: false })
+  if (!ctx) return null
+
+  const rng = mulberry32(0x51e7)
+  const mobile = window.innerWidth < 720
+  const count = mobile ? 140 : 240
+  const specks: Speck[] = []
+  const colors = ['#d8d4cc', '#d4a574', '#a8a8b0']
+  for (let i = 0; i < count; i++) {
+    specks.push({
+      x: (rng() - 0.5) * 2.2,
+      y: (rng() - 0.5) * 1.6,
+      z0: 0.12 + rng() * 0.88,
+      c: colors[i % 17 === 0 ? 1 : i % 5 === 0 ? 2 : 0],
+      s: 0.55 + rng() * 1.1,
+    })
+  }
+
+  const wrapDepth = (z: number) => {
+    const min = 0.08
+    const span = 0.92
+    let u = (z - min) % span
+    if (u < 0) u += span
+    return min + u
+  }
+
+  return {
+    kind: 'canvas2d',
+    render(state) {
+      const { width, height, dpr, warp, pointerX, pointerY } = state
+      const w = Math.max(1, Math.floor(width * dpr))
+      const h = Math.max(1, Math.floor(height * dpr))
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w
+        canvas.height = h
+      }
+
+      const t = warpEase(warp)
+      ctx.fillStyle = '#0a0a0b'
+      ctx.fillRect(0, 0, w, h)
+
+      const cx = w * 0.5 + pointerX * w * 0.03 * (1 - warp)
+      const cy = h * 0.48 + pointerY * h * 0.02 * (1 - warp) + t * h * 0.03
+      const k = Math.min(w, h) * (0.42 + t * 0.12)
+
+      const well = ctx.createRadialGradient(
+        cx,
+        cy,
+        0,
+        cx,
+        cy,
+        Math.max(w, h) * 0.62,
+      )
+      well.addColorStop(0, 'rgba(32,32,36,0.35)')
+      well.addColorStop(0.45, 'rgba(10,10,11,0)')
+      well.addColorStop(1, 'rgba(10,10,11,0.55)')
+      ctx.fillStyle = well
+      ctx.fillRect(0, 0, w, h)
+
+      const shift = t * 2.35
+      for (const p of specks) {
+        const z = wrapDepth(p.z0 - shift)
+        const x = cx + (p.x / z) * k
+        const y = cy + (p.y / z) * k
+        const r = (p.s * (mobile ? 1.15 : 0.95) * dpr) / z
+        if (r < 0.3) continue
+        ctx.beginPath()
+        ctx.fillStyle = p.c
+        ctx.globalAlpha = Math.min(0.85, 0.18 + (1 - z) * 0.7)
+        ctx.arc(x, y, r, 0, TAU)
+        ctx.fill()
+      }
+      ctx.globalAlpha = 1
+    },
+    destroy() {
+      specks.length = 0
+    },
+  }
+}
+
+export function attachFallRenderer(
+  canvas: HTMLCanvasElement,
+): FlyThroughRenderer | null {
+  return attachFlyThrough(canvas) ?? attachFall2D(canvas)
 }
