@@ -10,6 +10,7 @@ import { markIntroComplete } from './storage'
 import {
   FLY_MS,
   HOLD_MS,
+  INTRO_MS,
   apertureCoversViewport,
   camZFromWarp,
   clamp,
@@ -90,6 +91,10 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
     let raf = 0
     originT.current = 0
     lastT.current = 0
+    const failsafe =
+      frozenWarp == null
+        ? window.setTimeout(() => finish(), INTRO_MS + 200)
+        : 0
 
     const tick = (now: number) => {
       if (finished.current) return
@@ -161,6 +166,7 @@ export default function PortalIntro({ onComplete }: PortalIntroProps) {
     tick(performance.now())
     return () => {
       cancelAnimationFrame(raf)
+      if (failsafe) window.clearTimeout(failsafe)
       renderer.destroy()
     }
   }, [finish, frozenWarp])

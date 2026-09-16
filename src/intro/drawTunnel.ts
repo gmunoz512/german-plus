@@ -57,7 +57,6 @@ void main() {
   float ang = atan(p.y, p.x);
   float minSide = min(uRes.x, uRes.y);
   float feather = mix(2.4, 22.0, clamp(uSpeed, 0.0, 1.0));
-  float hole = smoothstep(uAperture - feather, uAperture + feather * 0.15, r);
 
   vec3 col = vec3(0.0);
   float weight = 0.0;
@@ -74,20 +73,20 @@ void main() {
       float scr = (1.92 * 1.08 * minSide) / max(rel, 0.05);
       float depthFade = smoothstep(0.05, 0.9, rel) * smoothstep(13.0, 2.4, rel);
       float prox = smoothstep(3.2, 0.08, rel);
-      float halfW = mix(0.75, 5.8, prox) + uBreath * 0.35;
+      float halfW = mix(0.9, 6.2, prox) + uBreath * 0.35;
       float d = abs(r - scr);
       float line = smoothstep(halfW, 0.0, d);
       float glow = exp(-(d * d) / max(12.0, halfW * halfW * 14.0));
-      vec3 ringCol = mix(uGold * 0.22, uGold, 0.35 + prox * 0.65);
+      vec3 ringCol = mix(uGold * 0.28, uGold, 0.4 + prox * 0.6);
       ringCol = mix(ringCol, vec3(0.96, 0.94, 0.90), prox * 0.35);
-      col += ringCol * (line * 0.85 + glow * 0.22) * depthFade * sw * alive;
+      col += ringCol * (line * 0.95 + glow * 0.28) * depthFade * sw * alive;
     }
 
     float spoke = abs(fract((ang / 6.28318530718) * 12.0 + uPhase * 0.08) - 0.5);
     float spokeBand = smoothstep(0.028, 0.0, spoke);
     float spokeFog = smoothstep(uAperture * 1.02, uAperture * 1.35, r) *
       smoothstep(minSide * 0.92, minSide * 0.18, r);
-    col += uGold * spokeBand * spokeFog * sw * 0.07;
+    col += uGold * spokeBand * spokeFog * sw * 0.1;
   }
 
   col /= max(weight, 0.001);
@@ -118,16 +117,15 @@ void main() {
 
   float rim = abs(r - uAperture);
   float rimGlow = exp(-rim * rim / (feather * feather * 3.2));
-  col += mix(uGold, vec3(1.0, 0.97, 0.92), 0.45) * rimGlow * 0.55;
+  col += mix(uGold, vec3(1.0, 0.97, 0.92), 0.45) * rimGlow * 0.7;
 
   float haze = exp(-max(0.0, r - uAperture) / (minSide * 0.55));
-  col += uGold * haze * 0.035;
+  col += uGold * haze * 0.04;
 
   float gn = hash(dot(gl_FragCoord.xy, vec2(12.9898, 78.233)) + uPhase * 40.0);
-  col += (gn - 0.5) * 0.04;
+  col += (gn - 0.5) * 0.035;
 
-  col = clamp(col, 0.0, 1.0);
-  gl_FragColor = vec4(col * hole, hole);
+  gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
 }
 `
 
@@ -143,43 +141,41 @@ function compile(gl: WebGLRenderingContext, type: number, src: string) {
   return shader
 }
 
-const GL_ATTRS: WebGLContextAttributes = {
-  alpha: true,
-  premultipliedAlpha: true,
-  antialias: false,
-  depth: false,
-  stencil: false,
-  powerPreference: 'high-performance',
+type OffscreenGL = {
+  canvas: HTMLCanvasElement
+  render: (state: TunnelDrawState) => void
+  destroy: () => void
 }
 
-function webglShadersCompile(): boolean {
-  const probe = document.createElement('canvas')
-  const gl = probe.getContext('webgl', GL_ATTRS)
-  if (!gl) return false
-  const vs = compile(gl, gl.VERTEX_SHADER, VERT)
-  const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG)
-  const ok = Boolean(vs && fs)
-  gl.getExtension('WEBGL_lose_context')?.loseContext()
-  return ok
-}
-
-function createWebGLRenderer(canvas: HTMLCanvasElement): Renderer | null {
-  if (!webglShadersCompile()) return null
-
-  const gl = canvas.getContext('webgl', GL_ATTRS)
+function createOffscreenWebGL(): OffscreenGL | null {
+  const canvas = document.createElement('canvas')
+  const gl = canvas.getContext('webgl', {
+    alpha: false,
+    antialias: false,
+    depth: false,
+    stencil: false,
+    powerPreference: 'high-performance',
+  })
   if (!gl) return null
 
   const vs = compile(gl, gl.VERTEX_SHADER, VERT)
   const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG)
-  if (!vs || !fs) return null
+  if (!vs || !fs) {
+    gl.getExtension('WEBGL_lose_context')?.loseContext()
+    return null
+  }
 
   const program = gl.createProgram()
-  if (!program) return null
+  if (!program) {
+    gl.getExtension('WEBGL_lose_context')?.loseContext()
+    return null
+  }
   gl.attachShader(program, vs)
   gl.attachShader(program, fs)
   gl.linkProgram(program)
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     gl.deleteProgram(program)
+    gl.getExtension('WEBGL_lose_context')?.loseContext()
     return null
   }
 
@@ -201,17 +197,15 @@ function createWebGLRenderer(canvas: HTMLCanvasElement): Renderer | null {
   const uGold = gl.getUniformLocation(program, 'uGold')
 
   return {
-    kind: 'webgl',
+    canvas,
     render(state) {
       const { width, height, dpr, warp, phase, breath, pointerX, pointerY } =
         state
-      const w = Math.floor(width * dpr)
-      const h = Math.floor(height * dpr)
+      const w = Math.max(1, Math.floor(width * dpr))
+      const h = Math.max(1, Math.floor(height * dpr))
       if (canvas.width !== w || canvas.height !== h) {
         canvas.width = w
         canvas.height = h
-        canvas.style.width = `${width}px`
-        canvas.style.height = `${height}px`
       }
 
       const camZ = camZFromWarp(warp)
@@ -221,10 +215,8 @@ function createWebGLRenderer(canvas: HTMLCanvasElement): Renderer | null {
       const speed = flySpeed(warp)
 
       gl.viewport(0, 0, w, h)
-      gl.disable(gl.DEPTH_TEST)
-      gl.enable(gl.BLEND)
-      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
-      gl.clearColor(0, 0, 0, 0)
+      gl.disable(gl.BLEND)
+      gl.clearColor(0, 0, 0, 1)
       gl.clear(gl.COLOR_BUFFER_BIT)
       gl.useProgram(program)
       gl.bindBuffer(gl.ARRAY_BUFFER, buf)
@@ -245,8 +237,7 @@ function createWebGLRenderer(canvas: HTMLCanvasElement): Renderer | null {
       gl.deleteProgram(program)
       gl.deleteShader(vs)
       gl.deleteShader(fs)
-      const ext = gl.getExtension('WEBGL_lose_context')
-      ext?.loseContext()
+      gl.getExtension('WEBGL_lose_context')?.loseContext()
     },
   }
 }
@@ -255,160 +246,178 @@ function rgba(r: number, g: number, b: number, a: number) {
   return `rgba(${r},${g},${b},${a})`
 }
 
-function createCanvas2DRenderer(canvas: HTMLCanvasElement): Renderer {
-  const particles = Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
-    z: 0.35 + ((i * 47) % 114) / 10,
-    ang: (i * 2.399) % TAU,
-    rad: 0.12 + ((i * 13) % 92) / 100,
-    size: 0.6 + ((i * 7) % 18) / 10,
-  }))
-
-  return {
-    kind: 'canvas2d',
-    render(state) {
-      const { width, height, dpr, warp, phase, breath, pointerX, pointerY } =
-        state
-      const w = Math.floor(width * dpr)
-      const h = Math.floor(height * dpr)
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w
-        canvas.height = h
-        canvas.style.width = `${width}px`
-        canvas.style.height = `${height}px`
-      }
-
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
-
-      const camZ = camZFromWarp(warp)
-      const aperture = apertureRadius(width, height, camZ, breath)
-      const cx = width * 0.5 + pointerX * 18
-      const cy = height * 0.5 + pointerY * 14
-      const speed = flySpeed(warp)
-      const m = Math.min(width, height)
-
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      ctx.clearRect(0, 0, width, height)
-      ctx.fillStyle = '#000'
-      ctx.fillRect(0, 0, width, height)
-
-      const samples = speed > 0.04 ? 4 : 1
-      for (let s = 0; s < samples; s++) {
-        const cam = camZ - s * speed * 0.11
-        const sw = 1 - s * 0.18
-        ctx.save()
-        ctx.globalAlpha = sw
-
-        for (let i = RING_COUNT - 1; i >= 0; i--) {
-          const z = 0.55 + i * 0.58
-          const rel = z - cam
-          if (rel < 0.045 || rel > 12.5) continue
-          const scr = (FOCAL * TUNNEL_R * m) / rel
-          if (scr < aperture * 0.92) continue
-          const depthFade =
-            smoothstep(0.045, 0.85, rel) * smoothstep(13, 2.4, rel)
-          const prox = smoothstep(3.2, 0.08, rel)
-          const lw = (0.7 + prox * 4.2 + breath * 0.3) * (1 + speed * 0.6)
-          ctx.beginPath()
-          ctx.arc(cx, cy, scr, 0, TAU)
-          ctx.strokeStyle = rgba(
-            GOLD.r,
-            GOLD.g,
-            GOLD.b,
-            (0.12 + prox * 0.55) * depthFade,
-          )
-          ctx.lineWidth = lw + 6
-          ctx.stroke()
-          ctx.beginPath()
-          ctx.arc(cx, cy, scr, 0, TAU)
-          ctx.strokeStyle = rgba(
-            244,
-            241,
-            234,
-            (0.18 + prox * 0.55) * depthFade,
-          )
-          ctx.lineWidth = lw
-          ctx.stroke()
-        }
-
-        ctx.strokeStyle = rgba(GOLD.r, GOLD.g, GOLD.b, 0.06 * sw)
-        ctx.lineWidth = 1
-        const spokes = 12
-        for (let k = 0; k < spokes; k++) {
-          const a = (k / spokes) * TAU + phase * 0.08
-          ctx.beginPath()
-          ctx.moveTo(
-            cx + Math.cos(a) * aperture * 1.04,
-            cy + Math.sin(a) * aperture * 1.04,
-          )
-          ctx.lineTo(cx + Math.cos(a) * m * 0.72, cy + Math.sin(a) * m * 0.72)
-          ctx.stroke()
-        }
-
-        for (const p of particles) {
-          const relp = p.z - cam
-          if (relp < 0.04 || relp > 12) continue
-          const pang = p.ang + phase * 0.12
-          const ps = (FOCAL * p.rad * TUNNEL_R * m) / relp
-          const px = cx + Math.cos(pang) * ps
-          const py = cy + Math.sin(pang) * ps
-          const pfog = smoothstep(0.04, 0.7, relp) * smoothstep(12, 2, relp)
-          const psize = p.size * (1 + smoothstep(6, 0.1, relp) * 1.6)
-          ctx.fillStyle = rgba(244, 241, 234, 0.45 * pfog)
-          if (speed > 0.12) {
-            const streak = psize + speed * 16
-            ctx.save()
-            ctx.translate(px, py)
-            ctx.rotate(Math.atan2(py - cy, px - cx))
-            ctx.globalAlpha = 0.35 * pfog * sw
-            const grad = ctx.createLinearGradient(-streak, 0, streak, 0)
-            grad.addColorStop(0, 'rgba(212,165,116,0)')
-            grad.addColorStop(0.5, 'rgba(244,241,234,0.9)')
-            grad.addColorStop(1, 'rgba(212,165,116,0)')
-            ctx.fillStyle = grad
-            ctx.fillRect(-streak, -psize * 0.35, streak * 2, psize * 0.7)
-            ctx.restore()
-          } else {
-            ctx.beginPath()
-            ctx.arc(px, py, psize, 0, TAU)
-            ctx.fill()
-          }
-        }
-        ctx.restore()
-      }
-
-      const rim = ctx.createRadialGradient(
-        cx,
-        cy,
-        Math.max(0, aperture - 18),
-        cx,
-        cy,
-        aperture + 28 + speed * 20,
-      )
-      rim.addColorStop(0, 'rgba(0,0,0,0)')
-      rim.addColorStop(0.72, 'rgba(212,165,116,0)')
-      rim.addColorStop(0.92, rgba(GOLD.r, GOLD.g, GOLD.b, 0.32))
-      rim.addColorStop(1, 'rgba(0,0,0,0)')
-      ctx.fillStyle = rim
-      ctx.fillRect(0, 0, width, height)
-
-      ctx.globalCompositeOperation = 'destination-out'
-      ctx.beginPath()
-      ctx.arc(cx, cy, aperture, 0, TAU)
-      ctx.fill()
-      ctx.globalCompositeOperation = 'source-over'
-    },
-    destroy() {
-      // nothing to dispose beyond the canvas itself
-    },
-  }
-}
-
 function smoothstep(edge0: number, edge1: number, x: number) {
   const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)))
   return t * t * (3 - 2 * t)
 }
 
-export function attachTunnelRenderer(canvas: HTMLCanvasElement): Renderer {
-  return createWebGLRenderer(canvas) ?? createCanvas2DRenderer(canvas)
+function makeParticles() {
+  return Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
+    z: 0.35 + ((i * 47) % 114) / 10,
+    ang: (i * 2.399) % TAU,
+    rad: 0.12 + ((i * 13) % 92) / 100,
+    size: 0.6 + ((i * 7) % 18) / 10,
+  }))
+}
+
+function drawTunnel2d(
+  ctx: CanvasRenderingContext2D,
+  state: TunnelDrawState,
+  particles: ReturnType<typeof makeParticles>,
+) {
+  const { width, height, warp, phase, breath, pointerX, pointerY } = state
+  const camZ = camZFromWarp(warp)
+  const aperture = apertureRadius(width, height, camZ, breath)
+  const cx = width * 0.5 + pointerX * 18
+  const cy = height * 0.5 + pointerY * 14
+  const speed = flySpeed(warp)
+  const m = Math.min(width, height)
+
+  ctx.fillStyle = '#000'
+  ctx.fillRect(0, 0, width, height)
+
+  const samples = speed > 0.04 ? 4 : 1
+  for (let s = 0; s < samples; s++) {
+    const cam = camZ - s * speed * 0.11
+    const sw = 1 - s * 0.18
+    ctx.save()
+    ctx.globalAlpha = sw
+
+    for (let i = RING_COUNT - 1; i >= 0; i--) {
+      const z = 0.55 + i * 0.58
+      const rel = z - cam
+      if (rel < 0.045 || rel > 12.5) continue
+      const scr = (FOCAL * TUNNEL_R * m) / rel
+      if (scr < aperture * 0.92) continue
+      const depthFade =
+        smoothstep(0.045, 0.85, rel) * smoothstep(13, 2.4, rel)
+      const prox = smoothstep(3.2, 0.08, rel)
+      const lw = (0.9 + prox * 4.6 + breath * 0.3) * (1 + speed * 0.6)
+      ctx.beginPath()
+      ctx.arc(cx, cy, scr, 0, TAU)
+      ctx.strokeStyle = rgba(
+        GOLD.r,
+        GOLD.g,
+        GOLD.b,
+        (0.2 + prox * 0.6) * depthFade,
+      )
+      ctx.lineWidth = lw + 7
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.arc(cx, cy, scr, 0, TAU)
+      ctx.strokeStyle = rgba(244, 241, 234, (0.28 + prox * 0.55) * depthFade)
+      ctx.lineWidth = lw
+      ctx.stroke()
+    }
+
+    ctx.strokeStyle = rgba(GOLD.r, GOLD.g, GOLD.b, 0.1 * sw)
+    ctx.lineWidth = 1
+    for (let k = 0; k < 12; k++) {
+      const a = (k / 12) * TAU + phase * 0.08
+      ctx.beginPath()
+      ctx.moveTo(
+        cx + Math.cos(a) * aperture * 1.04,
+        cy + Math.sin(a) * aperture * 1.04,
+      )
+      ctx.lineTo(cx + Math.cos(a) * m * 0.72, cy + Math.sin(a) * m * 0.72)
+      ctx.stroke()
+    }
+
+    for (const p of particles) {
+      const relp = p.z - cam
+      if (relp < 0.04 || relp > 12) continue
+      const pang = p.ang + phase * 0.12
+      const ps = (FOCAL * p.rad * TUNNEL_R * m) / relp
+      const px = cx + Math.cos(pang) * ps
+      const py = cy + Math.sin(pang) * ps
+      const pfog = smoothstep(0.04, 0.7, relp) * smoothstep(12, 2, relp)
+      const psize = p.size * (1 + smoothstep(6, 0.1, relp) * 1.6)
+      ctx.fillStyle = rgba(244, 241, 234, 0.5 * pfog)
+      if (speed > 0.12) {
+        const streak = psize + speed * 16
+        ctx.save()
+        ctx.translate(px, py)
+        ctx.rotate(Math.atan2(py - cy, px - cx))
+        ctx.globalAlpha = 0.4 * pfog * sw
+        const grad = ctx.createLinearGradient(-streak, 0, streak, 0)
+        grad.addColorStop(0, 'rgba(212,165,116,0)')
+        grad.addColorStop(0.5, 'rgba(244,241,234,0.9)')
+        grad.addColorStop(1, 'rgba(212,165,116,0)')
+        ctx.fillStyle = grad
+        ctx.fillRect(-streak, -psize * 0.35, streak * 2, psize * 0.7)
+        ctx.restore()
+      } else {
+        ctx.beginPath()
+        ctx.arc(px, py, psize, 0, TAU)
+        ctx.fill()
+      }
+    }
+    ctx.restore()
+  }
+
+  const rim = ctx.createRadialGradient(
+    cx,
+    cy,
+    Math.max(0, aperture - 18),
+    cx,
+    cy,
+    aperture + 28 + speed * 20,
+  )
+  rim.addColorStop(0, 'rgba(0,0,0,0)')
+  rim.addColorStop(0.72, 'rgba(212,165,116,0)')
+  rim.addColorStop(0.9, rgba(GOLD.r, GOLD.g, GOLD.b, 0.42))
+  rim.addColorStop(1, 'rgba(0,0,0,0)')
+  ctx.fillStyle = rim
+  ctx.fillRect(0, 0, width, height)
+}
+
+function punchAperture(ctx: CanvasRenderingContext2D, state: TunnelDrawState) {
+  const { width, height, warp, breath, pointerX, pointerY } = state
+  const camZ = camZFromWarp(warp)
+  const aperture = apertureRadius(width, height, camZ, breath)
+  const cx = width * 0.5 + pointerX * 18
+  const cy = height * 0.5 + pointerY * 14
+  ctx.globalCompositeOperation = 'destination-out'
+  ctx.beginPath()
+  ctx.arc(cx, cy, Math.max(1, aperture), 0, TAU)
+  ctx.fill()
+  ctx.globalCompositeOperation = 'source-over'
+}
+
+export function attachTunnelRenderer(display: HTMLCanvasElement): Renderer {
+  const webgl = createOffscreenWebGL()
+  const particles = makeParticles()
+
+  return {
+    kind: webgl ? 'webgl' : 'canvas2d',
+    render(state) {
+      const { width, height, dpr } = state
+      const w = Math.max(1, Math.floor(width * dpr))
+      const h = Math.max(1, Math.floor(height * dpr))
+      if (display.width !== w || display.height !== h) {
+        display.width = w
+        display.height = h
+        display.style.width = `${width}px`
+        display.style.height = `${height}px`
+      }
+
+      const ctx = display.getContext('2d', { alpha: true })
+      if (!ctx) return
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      ctx.clearRect(0, 0, width, height)
+
+      if (webgl) {
+        webgl.render(state)
+        ctx.drawImage(webgl.canvas, 0, 0, width, height)
+      } else {
+        drawTunnel2d(ctx, state, particles)
+      }
+
+      punchAperture(ctx, state)
+    },
+    destroy() {
+      webgl?.destroy()
+    },
+  }
 }
