@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { ArrowUpRight, ChevronDown, ExternalLink } from 'lucide-react'
 import { essays } from './essays'
 import PortalIntro from './intro/PortalIntro'
 import { shouldPlayIntro } from './intro/storage'
+
+const OrbitalHero = lazy(() => import('./orbital/OrbitalHero'))
 
 const pillars = [
   {
@@ -102,29 +104,41 @@ export default function App() {
         </header>
 
         <main id="top">
-          <section className="pt-10 sm:pt-14 pb-8 sm:pb-10 border-b border-line-soft">
-            <h1 className="fade-up fade-up-delay-1 font-serif text-[clamp(2.75rem,8vw,4.5rem)] leading-[1.05] tracking-tight text-paper text-balance normal-case">
-              german+
-            </h1>
-            <div className="fade-up fade-up-delay-2 mt-4 flex flex-wrap items-center gap-4">
-              <a
-                href="https://www.linkedin.com/in/g-mu%C3%B1oz"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-fog hover:text-paper transition-colors duration-200"
+          <section className="pt-6 sm:pt-10 pb-8 sm:pb-10 border-b border-line-soft max-md:min-h-[78svh]">
+            <div className="md:grid md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-8 lg:gap-12 md:items-center">
+              <div
+                className="fade-up fade-up-delay-2 order-first md:order-none md:[grid-column:2] md:[grid-row:1] sticky top-0 z-20 -mx-6 sm:-mx-8 mb-6 md:mx-0 md:mb-0 md:static md:z-auto bg-ink/90 backdrop-blur-md md:bg-transparent md:backdrop-blur-none border-b border-line-soft/70 md:border-0 h-[40vw] min-h-[160px] max-h-[210px] md:h-[280px] lg:h-[340px] xl:h-[380px] md:max-h-none md:min-h-0"
               >
-                linkedin
-                <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
-              </a>
-              <a
-                href="https://github.com/gmunoz512"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-fog hover:text-paper transition-colors duration-200"
-              >
-                github
-                <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
-              </a>
+                <Suspense fallback={null}>
+                  <OrbitalHero className="h-full w-full pointer-events-none md:pointer-events-auto" />
+                </Suspense>
+              </div>
+
+              <div className="min-w-0 md:[grid-column:1] md:[grid-row:1] max-md:pt-[12vh]">
+                <h1 className="fade-up fade-up-delay-1 font-serif text-[clamp(2.75rem,8vw,4.5rem)] leading-[1.05] tracking-tight text-paper text-balance normal-case">
+                  german+
+                </h1>
+                <div className="fade-up fade-up-delay-2 mt-4 flex flex-wrap items-center gap-4">
+                  <a
+                    href="https://www.linkedin.com/in/g-mu%C3%B1oz"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm text-fog hover:text-paper transition-colors duration-200"
+                  >
+                    linkedin
+                    <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
+                  </a>
+                  <a
+                    href="https://github.com/gmunoz512"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm text-fog hover:text-paper transition-colors duration-200"
+                  >
+                    github
+                    <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
+                  </a>
+                </div>
+              </div>
             </div>
           </section>
 
