@@ -381,8 +381,10 @@ export default function App() {
                   <div className="pb-6 -mx-3 px-3">
                     <div className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
                       <p className="text-sm text-fog max-w-lg">
-                        built for fun. real sizes, real telescope pixels, one
-                        swipe at a time.
+                        a slideshow of space, smallest to biggest. each slide puts
+                        one object next to the one before it at true size, from a
+                        dwarf planet up to the whole observable universe, so you
+                        can actually feel how big things get.
                       </p>
                       <div className="mt-5 space-y-0">
                         {scaleBits.map((p) => (
@@ -404,6 +406,16 @@ export default function App() {
                           </article>
                         ))}
                       </div>
+                      <figure className="mt-5 border-l border-accent/60 pl-4">
+                        <p className="text-xs text-fog tracking-wider">fun fact</p>
+                        <blockquote className="mt-1.5 text-[15px] leading-relaxed text-paper-dim max-w-lg">
+                          “if the sun were the size of a hot tub, earth would be
+                          the size of a sesame seed.”
+                        </blockquote>
+                        <figcaption className="mt-2 text-xs text-fog">
+                          — neil degrasse tyson &amp; lindsey nyx walker, <cite className="not-italic">lost in space: 5,000 facts for navigating the universe</cite>
+                        </figcaption>
+                      </figure>
                       <a
                         href="https://gmunoz512.github.io/intergalactic-scale/"
                         target="_blank"
