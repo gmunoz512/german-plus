@@ -55,6 +55,29 @@ const marsBits = [
   },
 ]
 
+const scaleBits = [
+  {
+    num: '01',
+    title: 'true scale',
+    body: 'ceres to the observable universe, 48 stops. each one sits next to the last at real relative size.',
+  },
+  {
+    num: '02',
+    title: 'drag it around',
+    body: 'spin planets, stars, galaxies and nebulae in 3d. flares rise and sink back into the hottest stars.',
+  },
+  {
+    num: '03',
+    title: 'real pixels',
+    body: 'hubble, webb and eso images where they exist, hand-built renders where they don\'t.',
+  },
+  {
+    num: '04',
+    title: 'still growing',
+    body: 'the last slide slowly expands, because the universe does too.',
+  },
+]
+
 function StatusPill({ status }: { status: string }) {
   return (
     <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium tracking-wide bg-accent-soft text-accent lowercase">
@@ -66,6 +89,7 @@ function StatusPill({ status }: { status: string }) {
 export default function App() {
   const [stackdOpen, setStackdOpen] = useState(false)
   const [marsOpen, setMarsOpen] = useState(false)
+  const [scaleOpen, setScaleOpen] = useState(false)
   const [openEssay, setOpenEssay] = useState<string | null>(null)
   const [introDone, setIntroDone] = useState(() => !shouldPlayIntro())
 
@@ -312,6 +336,81 @@ export default function App() {
                         className="mt-5 inline-flex items-center gap-2 rounded-full bg-paper px-4 py-2 text-sm font-medium text-ink hover:bg-paper-dim transition-colors duration-200"
                       >
                         open birthday in mars
+                        <ExternalLink className="size-3.5" aria-hidden />
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </li>
+              <li className="border-t border-line-soft">
+                <button
+                  type="button"
+                  aria-expanded={scaleOpen}
+                  onClick={() => setScaleOpen((o) => !o)}
+                  className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                >
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h3 className="text-lg font-medium text-paper">intergalactic scale</h3>
+                    <span className="text-xs text-fog tracking-wider">
+                      a size tour of space
+                    </span>
+                    <StatusPill status="live" />
+                    <ChevronDown
+                      className={`ml-auto size-4 text-fog transition-transform duration-200 ${
+                        scaleOpen ? 'rotate-180' : ''
+                      }`}
+                      aria-hidden
+                    />
+                  </div>
+                  <p className="mt-2 text-[15px] leading-relaxed text-fog max-w-xl">
+                    swipe from a dwarf planet to the edge of the observable
+                    universe, one object at a time, all at true scale.
+                  </p>
+                  <span className="mt-3 inline-flex items-center gap-1 text-sm text-accent">
+                    {scaleOpen ? 'hide the fun bits' : 'peek the fun bits'}
+                    <ChevronDown
+                      className={`size-3.5 transition-transform duration-200 ${
+                        scaleOpen ? 'rotate-180' : ''
+                      }`}
+                      aria-hidden
+                    />
+                  </span>
+                </button>
+
+                {scaleOpen && (
+                  <div className="pb-6 -mx-3 px-3">
+                    <div className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
+                      <p className="text-sm text-fog max-w-lg">
+                        built for fun. real sizes, real telescope pixels, one
+                        swipe at a time.
+                      </p>
+                      <div className="mt-5 space-y-0">
+                        {scaleBits.map((p) => (
+                          <article
+                            key={p.num}
+                            className="grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-8 py-4 border-t border-line-soft first:border-t-0 first:pt-0"
+                          >
+                            <span className="font-mono text-xs text-fog pt-1 tabular-nums normal-case">
+                              {p.num}
+                            </span>
+                            <div>
+                              <h4 className="text-base font-medium text-paper">
+                                {p.title}
+                              </h4>
+                              <p className="mt-1.5 text-[14px] leading-relaxed text-fog max-w-xl">
+                                {p.body}
+                              </p>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                      <a
+                        href="https://gmunoz512.github.io/intergalactic-scale/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-5 inline-flex items-center gap-2 rounded-full bg-paper px-4 py-2 text-sm font-medium text-ink hover:bg-paper-dim transition-colors duration-200"
+                      >
+                        open intergalactic scale
                         <ExternalLink className="size-3.5" aria-hidden />
                       </a>
                     </div>
