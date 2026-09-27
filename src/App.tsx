@@ -356,6 +356,19 @@ export default function App() {
                   <ArrowUpRight className="size-4 text-fog group-hover:text-accent transition-colors" aria-hidden />
                 </a>
               </li>
+              <li className="border-b border-line-soft">
+                <a
+                  href="https://github.com/gmunoz512/intergalactic-scale"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between gap-4 py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                >
+                  <span className="text-lg font-medium text-paper group-hover:text-accent transition-colors">
+                    intergalactic scale
+                  </span>
+                  <ArrowUpRight className="size-4 text-fog group-hover:text-accent transition-colors" aria-hidden />
+                </a>
+              </li>
             </ul>
           </section>
 
