@@ -16,9 +16,30 @@
   --color-accent-soft: rgba(212, 165, 116, 0.12);
 }
 
+/* frame insets: same margins as intergalactic scale, never inside a notch / home bar */
+:root {
+  --frame-m: 12px;
+  --frame-r: 12px;
+  --frame-top: max(var(--frame-m), env(safe-area-inset-top));
+  --frame-right: max(var(--frame-m), env(safe-area-inset-right));
+  --frame-bottom: max(var(--frame-m), env(safe-area-inset-bottom));
+  --frame-left: max(var(--frame-m), env(safe-area-inset-left));
+  --frame-line: #2a2a2e;
+  --frame-mark: #4a4a50;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --frame-m: clamp(32px, 2.6vw, 64px);
+    --frame-r: 16px;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: var(--frame-top);
+    background: #000;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -88,6 +109,74 @@
   .fade-up-delay-3 {
     animation-delay: 0.24s;
   }
+}
+
+@layer components {
+  .framed-page {
+    padding: var(--frame-top) var(--frame-right) var(--frame-bottom) var(--frame-left);
+  }
+
+  .site-frame,
+  .site-frame-mask {
+    position: fixed;
+    top: var(--frame-top);
+    right: var(--frame-right);
+    bottom: var(--frame-bottom);
+    left: var(--frame-left);
+    z-index: 40;
+    pointer-events: none;
+    border-radius: var(--frame-r);
+  }
+
+  .site-frame {
+    border: 1px solid var(--frame-line);
+  }
+
+  /* everything outside the frame is black; content scrolls under it */
+  .site-frame-mask {
+    box-shadow: 0 0 0 200vmax #000;
+  }
+
+  .frame-mark {
+    position: absolute;
+    display: block;
+    color: var(--frame-mark);
+    overflow: visible;
+  }
+  .frame-mark-tl { left: 8px; top: 8px; }
+  .frame-mark-tr { right: 8px; top: 8px; }
+  .frame-mark-bl { left: 8px; bottom: 8px; }
+  .frame-mark-br { right: 8px; bottom: 8px; }
+
+  .frame-tick {
+    position: absolute;
+    display: none;
+    background: var(--frame-mark);
+  }
+  .frame-tick-t { left: calc(50% - 0.5px); top: 0; width: 1px; height: 6px; }
+  .frame-tick-b { left: calc(50% - 0.5px); bottom: 0; width: 1px; height: 6px; }
+  .frame-tick-l { top: calc(50% - 0.5px); left: 0; width: 6px; height: 1px; }
+  .frame-tick-r { top: calc(50% - 0.5px); right: 0; width: 6px; height: 1px; }
+  @media (min-width: 768px) {
+    .frame-tick { display: block; }
+  }
+
+  /* before the intro's first frame: nothing of the page, no frame yet */
+  .intro-pending [data-reveal] { opacity: 0; }
+  .intro-pending [data-intro-plus] { opacity: 0; }
+  .intro-pending [data-hero] { border-bottom-color: transparent; }
+  .intro-pending .site-frame { border-color: transparent; }
+  .intro-pending .site-frame-mask { opacity: 0; }
+  .intro-pending .frame-mark,
+  .intro-pending .frame-tick { opacity: 0; }
+
+  /* a tap / key skip: settle quickly instead of snapping */
+  .intro-skipped [data-reveal] { animation: intro-settle 0.28s ease-out both; }
+}
+
+@keyframes intro-settle {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes fade-up {

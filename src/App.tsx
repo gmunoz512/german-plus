@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { ArrowUpRight, ChevronDown, ExternalLink } from 'lucide-react'
 import { essays } from './essays'
 import PortalIntro from './intro/PortalIntro'
 import { shouldPlayIntro } from './intro/storage'
+import SiteFrame from './SiteFrame'
 
 const pillars = [
   {
@@ -115,24 +116,45 @@ export default function App() {
   const [scaleOpen, setScaleOpen] = useState(false)
   const [safekeepOpen, setSafekeepOpen] = useState(false)
   const [openEssay, setOpenEssay] = useState<string | null>(null)
-  const [introDone, setIntroDone] = useState(() => !shouldPlayIntro())
+  const [playIntro] = useState(shouldPlayIntro)
+  const [intro, setIntro] = useState<'playing' | 'interactive' | 'done'>(() =>
+    playIntro ? 'playing' : 'done',
+  )
+  const [introSkipped, setIntroSkipped] = useState(false)
+  const pageRef = useRef<HTMLDivElement>(null)
+  const onIntroInteractive = useCallback(() => setIntro('interactive'), [])
+  const onIntroComplete = useCallback((skipped: boolean) => {
+    setIntroSkipped(skipped)
+    setIntro('done')
+  }, [])
+  // the css entrance only when the intro isn't choreographing the page itself
+  const fadeUp = (delay = '') => (playIntro ? '' : `fade-up ${delay}`)
 
   return (
     <>
-      {!introDone && (
-        <PortalIntro onComplete={() => setIntroDone(true)} />
+      {intro !== 'done' && (
+        <PortalIntro
+          pageRef={pageRef}
+          onInteractive={onIntroInteractive}
+          onComplete={onIntroComplete}
+        />
       )}
     <div
-      className="min-h-svh bg-ink text-mist lowercase"
-      {...(!introDone ? { inert: true, 'aria-hidden': true } : {})}
+      ref={pageRef}
+      className={`framed-page min-h-svh bg-ink text-mist lowercase ${
+        intro !== 'done' ? 'intro-pending' : ''
+      } ${introSkipped ? 'intro-skipped' : ''}`}
+      {...(intro === 'playing' ? { inert: true, 'aria-hidden': true } : {})}
     >
+      <SiteFrame />
       <div
         aria-hidden
+        data-reveal="0"
         className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,165,116,0.06),_transparent_55%)]"
       />
 
       <div className="relative mx-auto w-full max-w-3xl md:max-w-6xl px-6 sm:px-8">
-        <header className="flex items-center justify-between pt-6 pb-3 fade-up">
+        <header data-reveal="0" className={`flex items-center justify-between pt-6 pb-3 ${fadeUp()}`}>
           <a href="#top" className="font-serif text-xl text-paper tracking-tight normal-case">
             gm
           </a>
@@ -150,11 +172,12 @@ export default function App() {
         </header>
 
         <main id="top">
-          <section className="pt-10 sm:pt-14 pb-8 sm:pb-10 border-b border-line-soft">
-            <h1 className="fade-up fade-up-delay-1 font-serif text-[clamp(2.75rem,8vw,4.5rem)] leading-[1.05] tracking-tight text-paper text-balance normal-case">
-              german+
+          <section data-hero className="pt-10 sm:pt-14 pb-8 sm:pb-10 border-b border-line-soft">
+            <h1 className={`${fadeUp('fade-up-delay-1')} font-serif text-[clamp(2.75rem,8vw,4.5rem)] leading-[1.05] tracking-tight text-paper text-balance normal-case`}>
+              <span data-reveal="1" className="inline-block">german</span>
+              <span data-intro-plus className="text-accent">+</span>
             </h1>
-            <div className="fade-up fade-up-delay-2 mt-4 flex flex-wrap items-center gap-4">
+            <div data-reveal="2" className={`${fadeUp('fade-up-delay-2')} mt-4 flex flex-wrap items-center gap-4`}>
               <a
                 href="https://www.linkedin.com/in/g-mu%C3%B1oz"
                 target="_blank"
@@ -176,7 +199,7 @@ export default function App() {
             </div>
           </section>
 
-          <div className="md:grid md:grid-cols-2 md:gap-x-12 md:items-start md:[grid-template-areas:'about_products'_'thoughts_fun']">
+          <div data-reveal="3" className="md:grid md:grid-cols-2 md:gap-x-12 md:items-start md:[grid-template-areas:'about_products'_'thoughts_fun']">
           <section id="about" className="md:[grid-area:about] py-10 sm:py-12 border-b border-line-soft md:border-b-0">
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               about
@@ -668,9 +691,9 @@ export default function App() {
           </div>
         </main>
 
-        <footer className="py-8 sm:py-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <footer data-reveal="4" className="py-8 sm:py-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <p className="font-serif text-lg text-paper normal-case">german+</p>
+            <p className="font-serif text-lg text-paper normal-case">german<span className="text-accent">+</span></p>
             <p className="mt-1 text-sm text-fog">new york · building</p>
           </div>
           <div className="flex flex-wrap items-center gap-5">
