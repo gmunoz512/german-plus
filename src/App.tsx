@@ -528,6 +528,16 @@ export default function App() {
                       <p className="mt-5 text-sm text-fog">
                         in testflight (beta) for now. no app store link yet.
                       </p>
+                      <div className="mt-3 flex flex-wrap items-center gap-5 text-sm">
+                        <a href={`${import.meta.env.BASE_URL}safekeep/privacy/`} className="inline-flex items-center gap-1 text-fog hover:text-paper transition-colors duration-200">
+                          privacy
+                          <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
+                        </a>
+                        <a href={`${import.meta.env.BASE_URL}safekeep/support/`} className="inline-flex items-center gap-1 text-fog hover:text-paper transition-colors duration-200">
+                          support
+                          <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
+                        </a>
+                      </div>
                     </div>
                   </div>
                 )}

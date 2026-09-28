@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Safekeep: support</title>
+    <meta name="description" content="Safekeep support: how to add a voice note to a photo, and how to reach us." />
+    <link rel="icon" type="image/png" href="../../safekeep-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root { --ink:#0a0a0b; --raised:#111113; --line:#27272a; --soft:#1f1f23; --mist:#a1a1aa; --fog:#71717a; --paper:#f4f1ea; --dim:#c8c3b8; --accent:#d4a574; }
+      * { box-sizing: border-box; }
+      body { margin:0; background:var(--ink); color:var(--mist); font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased; text-transform:lowercase; }
+      body::before { content:""; position:fixed; inset:0; pointer-events:none; background:radial-gradient(ellipse at top, rgba(212,165,116,0.06), transparent 55%); }
+      main { position:relative; max-width:44rem; margin:0 auto; padding:24px 24px 64px; }
+      header { display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; }
+      header a { color:var(--fog); text-decoration:none; font-size:14px; }
+      header a:hover, a:hover { color:var(--paper); }
+      .gm { font-family:"Instrument Serif",Georgia,serif; font-size:22px; color:var(--paper); text-transform:none; }
+      .app { display:flex; align-items:center; gap:14px; margin-top:36px; }
+      .app img { width:56px; height:56px; border-radius:14px; border:1px solid var(--line); }
+      h1 { font-family:"Instrument Serif",Georgia,serif; font-weight:400; font-size:clamp(2.4rem,7vw,3.4rem); line-height:1.05; color:var(--paper); margin:0; letter-spacing:-0.01em; }
+      .kicker { color:var(--fog); font-size:13px; letter-spacing:0.06em; }
+      h2 { font-size:17px; font-weight:500; color:var(--paper); margin:32px 0 6px; }
+      p, li { color:var(--mist); font-size:15px; }
+      ul { padding-left:18px; }
+      .card { margin-top:28px; border:1px solid var(--line); background:rgba(17,17,19,0.5); border-radius:18px; padding:20px 22px; }
+      .pill { display:inline-block; border-radius:999px; padding:2px 10px; font-size:11px; font-weight:500; background:rgba(212,165,116,0.12); color:var(--accent); }
+      a { color:var(--accent); text-decoration:none; }
+      .btn { display:inline-block; margin-top:8px; border-radius:999px; background:var(--paper); color:var(--ink); padding:8px 16px; font-size:14px; font-weight:500; }
+      .btn:hover { background:var(--dim); color:var(--ink); }
+      footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--soft); font-size:13px; color:var(--fog); display:flex; gap:18px; flex-wrap:wrap; }
+      footer a { color:var(--fog); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <a class="gm" href="../../">gm</a>
+        <nav style="display:flex;gap:18px"><a href="../privacy/">privacy</a><a href="../support/">support</a></nav>
+      </header>
+      <div class="app"><img src="../../safekeep-icon.png" alt="safekeep app icon" width="56" height="56" /><div><div style="color:var(--paper);font-weight:500">safekeep</div><div class="kicker">add a voice note to a photo, remember it forever.</div></div></div>
+      <div style="margin-top:28px"><span class="pill">support</span></div>
+      <h1 style="margin-top:14px">need a hand?</h1>
+      <p style="margin-top:12px">email <a href="mailto:gmunoz512@icloud.com">gmunoz512@icloud.com</a> and i'll get back to you. a screenshot and your iphone + ios version help a lot.</p>
+
+      <h2>from messages</h2>
+      <ul>
+        <li>in the chat, hold the photo and tap save.</li>
+        <li>hold the voice note and tap copy.</li>
+        <li>tap +, then safekeep, then add copied voice note.</li>
+        <li>tap the photo. done. the new copy is in photos → albums → safekeep.</li>
+      </ul>
+
+      <h2>from voice memos</h2>
+      <ul>
+        <li>open the memo, tap share, then safekeep.</li>
+        <li>tap the photo it belongs to.</li>
+      </ul>
+
+      <h2>hearing it</h2>
+      <p>open the saved copy in photos and press and hold the picture. the voice note plays as the live photo's sound. make sure the ring/silent switch isn't muting it.</p>
+
+      <h2>common questions</h2>
+      <ul>
+        <li><strong style="color:var(--paper);font-weight:500">is my original photo changed?</strong> no. safekeep always saves a new copy.</li>
+        <li><strong style="color:var(--paper);font-weight:500">paste is greyed out in messages.</strong> use "choose audio file", or open safekeep and paste there.</li>
+        <li><strong style="color:var(--paper);font-weight:500">does anything get uploaded?</strong> no. see the <a href="../privacy/">privacy policy</a>.</li>
+      </ul>
+
+      <h2>sample voice note</h2>
+      <p>want to try it without recording anything? download this short sample, then share it to safekeep from the files app.</p>
+      <a class="btn" href="../sample-voice-note.m4a" download>download sample voice note</a>
+      <footer><span>german+ · new york</span><a href="../../">back to german+</a><a href="mailto:gmunoz512@icloud.com">gmunoz512@icloud.com</a></footer>
+    </main>
+  </body>
+</html>
