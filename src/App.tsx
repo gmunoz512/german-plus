@@ -500,7 +500,7 @@ export default function App() {
                           className="size-14 shrink-0 rounded-[14px] border border-line"
                         />
                         <p className="text-sm text-fog max-w-lg">
-                          a native iphone app (swiftui, ios 26). it saves a voice
+                          a native iphone app (swiftui, ios 16+). it saves a voice
                           note into a live photo copy of your picture, so you can
                           press and hold to hear it.
                         </p>
