@@ -78,6 +78,29 @@ const scaleBits = [
   },
 ]
 
+const safekeepBits = [
+  {
+    num: '01',
+    title: 'press and hold',
+    body: 'the voice note lives inside a live photo copy of your picture. hold the photo, hear the moment.',
+  },
+  {
+    num: '02',
+    title: 'from messages',
+    body: 'an imessage app: copy a voice note in the thread, add it to a photo without leaving the chat.',
+  },
+  {
+    num: '03',
+    title: 'from voice memos',
+    body: 'share a memo to safekeep and pick the photo it belongs to.',
+  },
+  {
+    num: '04',
+    title: 'original untouched',
+    body: 'your original photo is never changed. safekeep only saves a new copy.',
+  },
+]
+
 function StatusPill({ status }: { status: string }) {
   return (
     <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium tracking-wide bg-accent-soft text-accent lowercase">
@@ -90,6 +113,7 @@ export default function App() {
   const [stackdOpen, setStackdOpen] = useState(false)
   const [marsOpen, setMarsOpen] = useState(false)
   const [scaleOpen, setScaleOpen] = useState(false)
+  const [safekeepOpen, setSafekeepOpen] = useState(false)
   const [openEssay, setOpenEssay] = useState<string | null>(null)
   const [introDone, setIntroDone] = useState(() => !shouldPlayIntro())
 
@@ -425,6 +449,85 @@ export default function App() {
                         open intergalactic scale
                         <ExternalLink className="size-3.5" aria-hidden />
                       </a>
+                    </div>
+                  </div>
+                )}
+              </li>
+              <li className="border-t border-line-soft">
+                <button
+                  type="button"
+                  aria-expanded={safekeepOpen}
+                  onClick={() => setSafekeepOpen((o) => !o)}
+                  className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                >
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h3 className="text-lg font-medium text-paper">safekeep</h3>
+                    <span className="text-xs text-fog tracking-wider">
+                      voice notes on photos
+                    </span>
+                    <StatusPill status="testflight beta" />
+                    <ChevronDown
+                      className={`ml-auto size-4 text-fog transition-transform duration-200 ${
+                        safekeepOpen ? 'rotate-180' : ''
+                      }`}
+                      aria-hidden
+                    />
+                  </div>
+                  <p className="mt-2 text-[15px] leading-relaxed text-fog max-w-xl">
+                    add a voice note to a photo, remember it forever.
+                  </p>
+                  <span className="mt-3 inline-flex items-center gap-1 text-sm text-accent">
+                    {safekeepOpen ? 'hide how it works' : 'peek how it works'}
+                    <ChevronDown
+                      className={`size-3.5 transition-transform duration-200 ${
+                        safekeepOpen ? 'rotate-180' : ''
+                      }`}
+                      aria-hidden
+                    />
+                  </span>
+                </button>
+
+                {safekeepOpen && (
+                  <div className="pb-6 -mx-3 px-3">
+                    <div className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
+                      <div className="flex items-start gap-4">
+                        <img
+                          src={`${import.meta.env.BASE_URL}safekeep-icon.png`}
+                          alt="safekeep app icon"
+                          width={56}
+                          height={56}
+                          loading="lazy"
+                          className="size-14 shrink-0 rounded-[14px] border border-line"
+                        />
+                        <p className="text-sm text-fog max-w-lg">
+                          a native iphone app (swiftui, ios 26). it saves a voice
+                          note into a live photo copy of your picture, so you can
+                          press and hold to hear it.
+                        </p>
+                      </div>
+                      <div className="mt-5 space-y-0">
+                        {safekeepBits.map((p) => (
+                          <article
+                            key={p.num}
+                            className="grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-8 py-4 border-t border-line-soft first:border-t-0 first:pt-0"
+                          >
+                            <span className="font-mono text-xs text-fog pt-1 tabular-nums normal-case">
+                              {p.num}
+                            </span>
+                            <div>
+                              <h4 className="text-base font-medium text-paper">
+                                {p.title}
+                              </h4>
+                              <p className="mt-1.5 text-[14px] leading-relaxed text-fog max-w-xl">
+                                {p.body}
+                              </p>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                      <p className="mt-5 text-sm text-fog">
+                        in testflight (beta) for now. no app store link yet.
+                      </p>
                     </div>
                   </div>
                 )}
