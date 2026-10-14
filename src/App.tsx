@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { ArrowUpRight, ChevronDown, ExternalLink } from 'lucide-react'
+import { ArrowUpRight, ChevronDown, ExternalLink, Eye, EyeOff } from 'lucide-react'
 import { essays } from './essays'
 import EssayProgress from './EssayProgress'
 import PortalIntro from './intro/PortalIntro'
@@ -103,9 +103,18 @@ const safekeepBits = [
   },
 ]
 
+function EyeToggle({ open, label }: { open: boolean; label: string }) {
+  return (
+    <span className="ml-auto inline-flex size-8 items-center justify-center rounded-full text-fog transition-colors duration-200 group-hover:text-mist group-hover:bg-paper/5 group-active:bg-paper/10">
+      <span className="sr-only">{open ? `less about ${label}` : `more about ${label}`}</span>
+      {open ? <EyeOff className="size-[18px]" aria-hidden /> : <Eye className="size-[18px]" aria-hidden />}
+    </span>
+  )
+}
+
 function StatusPill({ status }: { status: string }) {
   return (
-    <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium tracking-wide bg-accent-soft text-accent lowercase">
+    <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium tracking-wide border border-line text-fog lowercase">
       {status}
     </span>
   )
@@ -246,33 +255,16 @@ export default function App() {
                   onClick={() => setStackdOpen((o) => !o)}
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-lg font-medium text-paper">stackd</h3>
-                    <span className="text-xs text-fog tracking-wider">
-                      marketplace
-                    </span>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-medium text-paper whitespace-nowrap">stackd</h3>
                     <StatusPill status="draft live" />
-                    <ChevronDown
-                      className={`ml-auto size-4 text-fog transition-transform duration-200 ${
-                        stackdOpen ? 'rotate-180' : ''
-                      }`}
-                      aria-hidden
-                    />
+                    <EyeToggle open={stackdOpen} label="stackd" />
                   </div>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
                     three-sided marketplace for str hosts, local experience and
                     restaurant vendors, and guests, with jc, the trip planner,
                     built in.
                   </p>
-                  <span className="mt-3 inline-flex items-center gap-1 text-sm text-accent">
-                    {stackdOpen ? "hide what i'm building" : "what i'm building"}
-                    <ChevronDown
-                      className={`size-3.5 transition-transform duration-200 ${
-                        stackdOpen ? 'rotate-180' : ''
-                      }`}
-                      aria-hidden
-                    />
-                  </span>
                 </button>
 
                 {stackdOpen && (
@@ -323,32 +315,15 @@ export default function App() {
                   onClick={() => setMarsOpen((o) => !o)}
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-lg font-medium text-paper">mars</h3>
-                    <span className="text-xs text-fog tracking-wider">
-                      birthday in mars
-                    </span>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-medium text-paper whitespace-nowrap">mars</h3>
                     <StatusPill status="live" />
-                    <ChevronDown
-                      className={`ml-auto size-4 text-fog transition-transform duration-200 ${
-                        marsOpen ? 'rotate-180' : ''
-                      }`}
-                      aria-hidden
-                    />
+                    <EyeToggle open={marsOpen} label="mars" />
                   </div>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
                     a weekend toy: spin mars, drop your birthday, stand on
                     jezero and look up. no pitch deck energy.
                   </p>
-                  <span className="mt-3 inline-flex items-center gap-1 text-sm text-accent">
-                    {marsOpen ? 'hide the fun bits' : 'peek the fun bits'}
-                    <ChevronDown
-                      className={`size-3.5 transition-transform duration-200 ${
-                        marsOpen ? 'rotate-180' : ''
-                      }`}
-                      aria-hidden
-                    />
-                  </span>
                 </button>
 
                 {marsOpen && (
@@ -398,32 +373,15 @@ export default function App() {
                   onClick={() => setScaleOpen((o) => !o)}
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-lg font-medium text-paper">intergalactic scale</h3>
-                    <span className="text-xs text-fog tracking-wider">
-                      a size tour of space
-                    </span>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-medium text-paper whitespace-nowrap">intergalactic scale</h3>
                     <StatusPill status="live" />
-                    <ChevronDown
-                      className={`ml-auto size-4 text-fog transition-transform duration-200 ${
-                        scaleOpen ? 'rotate-180' : ''
-                      }`}
-                      aria-hidden
-                    />
+                    <EyeToggle open={scaleOpen} label="intergalactic scale" />
                   </div>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
                     swipe from a dwarf planet to the edge of the observable
                     universe, one object at a time, all at true scale.
                   </p>
-                  <span className="mt-3 inline-flex items-center gap-1 text-sm text-accent">
-                    {scaleOpen ? 'hide the fun bits' : 'peek the fun bits'}
-                    <ChevronDown
-                      className={`size-3.5 transition-transform duration-200 ${
-                        scaleOpen ? 'rotate-180' : ''
-                      }`}
-                      aria-hidden
-                    />
-                  </span>
                 </button>
 
                 {scaleOpen && (
@@ -485,31 +443,14 @@ export default function App() {
                   onClick={() => setSafekeepOpen((o) => !o)}
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-lg font-medium text-paper">safekeep</h3>
-                    <span className="text-xs text-fog tracking-wider">
-                      voice notes on photos
-                    </span>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-medium text-paper whitespace-nowrap">safekeep</h3>
                     <StatusPill status="testflight beta" />
-                    <ChevronDown
-                      className={`ml-auto size-4 text-fog transition-transform duration-200 ${
-                        safekeepOpen ? 'rotate-180' : ''
-                      }`}
-                      aria-hidden
-                    />
+                    <EyeToggle open={safekeepOpen} label="safekeep" />
                   </div>
                   <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
                     add a voice note to a photo, remember it forever.
                   </p>
-                  <span className="mt-3 inline-flex items-center gap-1 text-sm text-accent">
-                    {safekeepOpen ? 'hide how it works' : 'peek how it works'}
-                    <ChevronDown
-                      className={`size-3.5 transition-transform duration-200 ${
-                        safekeepOpen ? 'rotate-180' : ''
-                      }`}
-                      aria-hidden
-                    />
-                  </span>
                 </button>
 
                 {safekeepOpen && (
@@ -644,8 +585,8 @@ export default function App() {
                       }
                       className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                     >
-                      <div className="flex flex-wrap items-center gap-3">
-                        <h3 className="text-lg font-medium text-paper">
+                      <div className="flex items-center gap-3">
+                        <h3 className="text-lg font-medium text-paper whitespace-nowrap">
                           {essay.title}
                         </h3>
                         <span className="text-xs text-fog tracking-wider">
