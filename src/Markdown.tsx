@@ -27,7 +27,7 @@ function bionic(text: string, key: number): ReactNode {
 }
 const isLetter = (c: string | undefined) => !!c && /[\p{L}\p{M}]/u.test(c)
 
-function inline(text: string): ReactNode[] {
+export function inline(text: string): ReactNode[] {
   const out: ReactNode[] = []
   const re = /\*\*(.+?)\*\*|\*(.+?)\*/g
   let last = 0

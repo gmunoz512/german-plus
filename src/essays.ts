@@ -13,7 +13,7 @@ export const essays: Essay[] = [
     id: '100-tabs-open',
     title: '100 tabs open',
     date: 'oct 14, 2026',
-    paragraphs: ['on reading, rewiring, and the ability hiding inside the word disability.'],
+    paragraphs: ['on reading, rewiring, and **emp**sizing the ability not disability.'],
     markdown: tabsOpen,
   },
   {
@@ -21,7 +21,7 @@ export const essays: Essay[] = [
     title: 'four ways to reach',
     date: 'oct 4, 2026',
     paragraphs: [
-      "i used to think ambition meant one thing: more. more users, more money, more hours. lately i think it's less a size and more a direction. there are a few ways to push, and they feel completely different when you're in them.",
+      "i used to think ambition meant one thing: more. now i think it's more about direction. locked in with the journey being the destination.",
       "the sprint. stackd connects hosts, vendors, and guests, and there's a long list of reasons to wait before showing it to anyone. i'm trying not to. put it out, watch what people actually do, fix it, and do it again. the plan i'd write today would be wrong by next month anyway.",
       "the reach. this is going after the version that scares you a little. not the safe, small one you know you can finish. the one where, if it works, it actually matters. most of the time nobody tells you no. you just never ask.",
       "the dig. picking one thing and staying with it longer than feels normal. no skimming, no moving on once it kind of works. staying until you could explain it to someone who's never heard of it.",
