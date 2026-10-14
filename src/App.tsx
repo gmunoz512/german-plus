@@ -104,19 +104,6 @@ const empsizeBits = [
   },
 ]
 
-const empsizeSafari = [
-  { num: '01', title: 'get testflight', body: 'install testflight from the app store on your iphone, ipad or mac.' },
-  { num: '02', title: 'request beta access', body: 'no public link yet. email me and i\'ll send a testflight invite.' },
-  { num: '03', title: 'turn it on', body: 'settings > apps > safari > extensions > empsize. switch it on and allow on all websites.' },
-  { num: '04', title: 'toggle it', body: 'in safari, tap the aa / puzzle menu, then empsize, then the big switch.' },
-]
-
-const empsizeChrome = [
-  { num: '01', title: 'download', body: 'grab the zip below and unzip it.' },
-  { num: '02', title: 'load it', body: 'open chrome://extensions, turn on developer mode, click load unpacked and pick the folder.' },
-  { num: '03', title: 'pin and toggle', body: 'pin empsize from the puzzle menu, then click it to flip the switch.' },
-]
-
 const safekeepBits = [
   {
     num: '01',
@@ -589,57 +576,7 @@ export default function App() {
                           </article>
                         ))}
                       </div>
-                      <p className="mt-6 font-mono lowercase text-meta tracking-[0.15em] text-fog">install · safari (iphone, ipad, mac)</p>
-                      <div className="mt-3 space-y-0">
-                        {empsizeSafari.map((p) => (
-                          <article
-                            key={p.num}
-                            className="grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-8 py-4 border-t border-line-soft first:border-t-0 first:pt-0"
-                          >
-                            <span className="font-mono lowercase text-meta tracking-[0.15em] text-fog pt-1 tabular-nums">
-                              {p.num}
-                            </span>
-                            <div>
-                              <h4 className="text-base leading-[1.55] font-medium text-paper">
-                                {p.title}
-                              </h4>
-                              <p className="mt-1.5 text-sm leading-[1.55] text-body max-w-xl">
-                                {p.body}
-                              </p>
-                            </div>
-                          </article>
-                        ))}
-                      </div>
-                      <p className="mt-6 font-mono lowercase text-meta tracking-[0.15em] text-fog">install · chrome</p>
-                      <div className="mt-3 space-y-0">
-                        {empsizeChrome.map((p) => (
-                          <article
-                            key={p.num}
-                            className="grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-8 py-4 border-t border-line-soft first:border-t-0 first:pt-0"
-                          >
-                            <span className="font-mono lowercase text-meta tracking-[0.15em] text-fog pt-1 tabular-nums">
-                              {p.num}
-                            </span>
-                            <div>
-                              <h4 className="text-base leading-[1.55] font-medium text-paper">
-                                {p.title}
-                              </h4>
-                              <p className="mt-1.5 text-sm leading-[1.55] text-body max-w-xl">
-                                {p.body}
-                              </p>
-                            </div>
-                          </article>
-                        ))}
-                      </div>
-                      <div className="mt-3 flex flex-wrap items-center gap-5 text-sm">
-                        <a href={`${import.meta.env.BASE_URL}empsize-chrome.zip`} download className="inline-flex items-center gap-1 text-fog hover:text-paper transition-colors duration-200">
-                          download for chrome (.zip)
-                          <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
-                        </a>
-                        <a href="mailto:gmunoz512@icloud.com?subject=empsize%20beta" className="inline-flex items-center gap-1 text-fog hover:text-paper transition-colors duration-200">
-                          request beta access
-                          <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
-                        </a>
+                      <div className="mt-6 flex flex-wrap items-center gap-5 text-sm">
                         <a href="https://github.com/gmunoz512/focus-reader" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-fog hover:text-paper transition-colors duration-200">
                           github
                           <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
