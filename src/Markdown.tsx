@@ -8,7 +8,7 @@ function boldLen(w: string): number {
   const k = n <= 7 ? Math.round(n * 0.45) : Math.ceil(n * 0.45)
   return Math.max(1, Math.min(n - 1, k))
 }
-const B = 'font-semibold text-paper'
+const B = 'font-semibold text-paper [font-family:inherit] [font-size:inherit] [line-height:inherit] [letter-spacing:inherit]'
 function bionic(text: string, key: number): ReactNode {
   const parts: ReactNode[] = []
   let last = 0
