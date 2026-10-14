@@ -7,6 +7,19 @@ export type Essay = {
 
 export const essays: Essay[] = [
   {
+    id: 'four-ways-to-reach',
+    title: 'four ways to reach',
+    date: 'oct 13, 2026',
+    paragraphs: [
+      "i used to think ambition meant one thing: more. more users, more money, more hours. lately i think it's less a size and more a direction. there are a few ways to push, and they feel completely different when you're in them.",
+      "the sprint. stackd connects hosts, vendors, and guests, and there's a long list of reasons to wait before showing it to anyone. i'm trying not to. put it out, watch what people actually do, fix it, and do it again. the plan i'd write today would be wrong by next month anyway.",
+      "the reach. this is going after the version that scares you a little. not the safe, small one you know you can finish. the one where, if it works, it actually matters. most of the time nobody tells you no. you just never ask.",
+      "the dig. picking one thing and staying with it longer than feels normal. no skimming, no moving on once it kind of works. staying until you could explain it to someone who's never heard of it.",
+      "the wander. birthday in mars had no business plan. real rover images from jezero crater, and the night sky as you'd see it standing there. no customers, no roadmap. it was just fun, and i'd do it again in a heartbeat.",
+      "none of these is better than the others. the hard part is noticing which one you're in, and which one you've been avoiding. for me it's the reach.",
+    ],
+  },
+  {
     id: 'more-than-a-resume',
     title: 'more than a resume',
     date: 'sep 20, 2026',
