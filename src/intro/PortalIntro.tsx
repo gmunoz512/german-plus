@@ -1,21 +1,18 @@
-import { useEffect, useRef, type PointerEvent, type RefObject } from 'react'
-import { attachFallRenderer, type FlyThroughRenderer } from './flyThrough'
+import { useEffect, useRef, type RefObject } from 'react'
 import { traceFrame, type MarkId } from './frameGeometry'
-import { markIntroComplete, readFrozenTime, readFrozenWarp } from './storage'
+import { markIntroComplete, readFrozenTime } from './storage'
 import {
-  COLLAPSE_AT,
   END_MS,
-  END_U,
   P,
+  clamp,
   easeInOutCubic,
-  easeIris,
   easeOutBack,
   easeOutCubic,
   easeTrace,
   lerp,
   progress,
+  smoothstep,
 } from './timeline'
-import { FLY_MS, HOLD_MS, clamp, smoothstep } from './tunnel'
 
 type PortalIntroProps = {
   /** the page root: holds [data-reveal] blocks, the [data-intro-plus] glyph and the frame */
@@ -73,17 +70,14 @@ function reachTime(d: number, half: number) {
 
 export default function PortalIntro({ pageRef, onInteractive, onComplete }: PortalIntroProps) {
   const rootRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const collapseRef = useRef<HTMLDivElement>(null)
   const skipRef = useRef<HTMLButtonElement>(null)
   const dotRef = useRef<HTMLDivElement>(null)
   const flareHRef = useRef<HTMLDivElement>(null)
   const flareVRef = useRef<HTMLDivElement>(null)
-  const irisRef = useRef<SVGCircleElement>(null)
+  const glintRef = useRef<HTMLDivElement>(null)
   const threadRef = useRef<SVGLineElement>(null)
   const threadGlowRef = useRef<SVGLineElement>(null)
   const traceRefs = useRef<Record<string, SVGPathElement | null>>({})
-  const pointerTarget = useRef({ x: 0, y: 0 })
   const cbs = useRef({ onInteractive, onComplete })
 
   useEffect(() => {
@@ -93,12 +87,10 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
   useEffect(() => {
     const page = pageRef.current
     const root = rootRef.current
-    const canvas = canvasRef.current
-    if (!page || !root || !canvas) return
+    if (!page || !root) return
 
-    const frozenWarp = readFrozenWarp()
     const frozenT = readFrozenTime()
-    const debugFrozen = frozenWarp != null || frozenT != null
+    const debugFrozen = frozenT != null
 
     const blocks = Array.from(page.querySelectorAll<HTMLElement>('[data-reveal]'))
     const plusEl = page.querySelector<HTMLElement>('[data-intro-plus]')
@@ -111,15 +103,11 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
     if (hero) touched.push(hero)
     if (frameMask) touched.push(frameMask)
 
-    let renderer: FlyThroughRenderer | null = attachFallRenderer(canvas)
-    // no webgl / 2d at all: start at the iris, the rest still plays
-    let offset = renderer ? 0 : COLLAPSE_AT + P.collapse[1] * 0.45
     let origin = 0
     let raf = 0
     let done = false
     let interactive = false
     let lastD = ''
-    const px = { x: 0, y: 0 }
 
     const prevOverflow = document.body.style.overflow
     const prevHtmlOverflow = document.documentElement.style.overflow
@@ -131,11 +119,6 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
     }
     window.scrollTo(0, 0)
 
-    const dropRenderer = () => {
-      renderer?.destroy()
-      renderer = null
-    }
-
     const finish = (skipped: boolean) => {
       if (done) return
       done = true
@@ -143,14 +126,6 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
       markIntroComplete()
       cbs.current.onComplete(skipped)
     }
-
-    const onLost = (event: Event) => {
-      event.preventDefault()
-      dropRenderer()
-      // jump past the wormhole, keep the rest of the sequence
-      offset += Math.max(0, COLLAPSE_AT + P.collapse[1] * 0.6 - (performance.now() - origin + offset))
-    }
-    canvas.addEventListener('webglcontextlost', onLost)
 
     const skip = () => {
       if (!debugFrozen) finish(true)
@@ -178,8 +153,7 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
     const tick = (now: number) => {
       if (done) return
       if (!origin) origin = now
-      const t = frozenT ?? now - origin + offset
-      const u = t - COLLAPSE_AT
+      const u = frozenT ?? now - origin
       const w = window.innerWidth
       const h = window.innerHeight
       const mobile = w < 768
@@ -189,50 +163,8 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
       const fr = frameBox?.getBoundingClientRect()
       const radius = frameBox ? parseFloat(getComputedStyle(frameBox).borderTopLeftRadius) || 12 : 12
 
-      // ── wormhole ──
-      const collapseK = progress(u, P.collapse)
-      const collapseEl = collapseRef.current!
-      if (u < P.collapse[1] && renderer) {
-        const warp = frozenWarp ?? clamp((t - HOLD_MS) / FLY_MS, 0, 1)
-        if (frozenWarp == null) {
-          px.x += (pointerTarget.current.x * (1 - collapseK) - px.x) * 0.08
-          px.y += (pointerTarget.current.y * (1 - collapseK) - px.y) * 0.08
-        }
-        renderer.render({
-          width: w,
-          height: h,
-          dpr: Math.min(mobile ? 1.5 : 2, window.devicePixelRatio || 1),
-          warp,
-          pointerX: px.x,
-          pointerY: px.y,
-        })
-      }
-      const irisOn = frozenWarp == null && u >= 0
-      if (!irisOn) {
-        collapseEl.style.clipPath = ''
-        collapseEl.style.transform = ''
-        collapseEl.style.visibility = ''
-      } else if (collapseK < 1) {
-        const e = easeIris(collapseK)
-        const far = Math.hypot(Math.max(plus.x, w - plus.x), Math.max(plus.y, h - plus.y)) + 2
-        const rs = lerp(far, 0, e)
-        const s = lerp(1, 0.5, e)
-        collapseEl.style.visibility = ''
-        collapseEl.style.transformOrigin = `${plus.x}px ${plus.y}px`
-        collapseEl.style.transform = `scale(${s})`
-        collapseEl.style.clipPath = `circle(${(rs / s).toFixed(2)}px at ${plus.x}px ${plus.y}px)`
-        collapseEl.style.opacity = String(1 - smoothstep(0.82, 1, collapseK))
-        const iris = irisRef.current!
-        iris.setAttribute('cx', String(plus.x))
-        iris.setAttribute('cy', String(plus.y))
-        iris.setAttribute('r', String(Math.max(0, rs)))
-        iris.style.opacity = String(0.5 * smoothstep(0, 0.25, collapseK) * (1 - smoothstep(0.75, 1, collapseK)))
-      } else {
-        collapseEl.style.visibility = 'hidden'
-        irisRef.current!.style.opacity = '0'
-      }
-      root.style.background = irisOn && collapseK >= 1 ? 'transparent' : ''
-      if (skipRef.current) skipRef.current.style.opacity = u > -300 ? '0' : ''
+      root.style.background = u >= P.settle[0] ? 'transparent' : ''
+      if (skipRef.current) skipRef.current.style.opacity = u > P.trace[0] ? '0' : ''
 
       // ── point of light → the tan + ──
       const dotA = easeOutCubic(progress(u, P.dotIn))
@@ -249,7 +181,17 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
       fh.style.opacity = fv.style.opacity = String(flareA * 0.9)
       fh.style.transform = `translate3d(${plus.x - 100}px, ${plus.y - 0.5}px, 0) scaleX(${(flareLen / 100).toFixed(4)})`
       fv.style.transform = `translate3d(${plus.x - 0.5}px, ${plus.y - 100}px, 0) scaleY(${(flareLen / 100).toFixed(4)})`
-      if (plusEl) plusEl.style.opacity = frozenWarp != null ? '0' : String(easeOutCubic(progress(u, P.plusIn)))
+      if (plusEl) {
+        plusEl.style.opacity = String(easeOutCubic(progress(u, P.plusIn)))
+      }
+
+      const shine = Math.sin(Math.PI * progress(u, P.shine))
+      const glint = glintRef.current!
+      glint.style.opacity = String(shine * 0.85)
+      glint.style.transform = `translate3d(${plus.x - 40}px, ${plus.y - 40}px, 0) scale(${lerp(0.6, 1.15, progress(u, P.shine)).toFixed(4)}) rotate(${(progress(u, P.shine) * 45).toFixed(2)}deg)`
+      if (plusEl) {
+        plusEl.style.textShadow = shine > 0.01 ? `0 0 ${(14 * shine).toFixed(1)}px rgba(255,184,103,${(0.75 * shine).toFixed(3)})` : ''
+      }
 
       // ── frame ──
       if (fr) {
@@ -325,14 +267,12 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
         interactive = true
         root.style.pointerEvents = 'none'
         unlockScroll()
-        dropRenderer()
         cbs.current.onInteractive()
       }
-      root.dataset.introT = String(Math.round(t))
-      root.dataset.introPhase =
-        u < 0 ? 'wormhole' : u < P.collapse[1] ? 'collapse' : u < P.trace[0] ? 'plus' : u < P.reveal ? 'frame' : 'reveal'
+      root.dataset.introT = String(Math.round(u))
+      root.dataset.introPhase = u < P.trace[0] ? 'plus' : u < P.reveal ? 'frame' : 'reveal'
 
-      if (!debugFrozen && u >= END_U) {
+      if (!debugFrozen && u >= END_MS) {
         finish(false)
         return
       }
@@ -344,28 +284,18 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
     return () => {
       cancelAnimationFrame(raf)
       if (failsafe) window.clearTimeout(failsafe)
-      canvas.removeEventListener('webglcontextlost', onLost)
       window.removeEventListener('pointerdown', skip, { capture: true })
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('wheel', skip)
       window.removeEventListener('touchmove', skip)
       unlockScroll()
-      dropRenderer()
       for (const el of touched) {
-        for (const prop of ['opacity', 'transform', 'color', 'background', 'border-bottom-color']) {
+        for (const prop of ['opacity', 'transform', 'color', 'background', 'border-bottom-color', 'text-shadow']) {
           el.style.removeProperty(prop)
         }
       }
     }
   }, [pageRef])
-
-  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === 'touch') return
-    pointerTarget.current = {
-      x: clamp((event.clientX / window.innerWidth - 0.5) * 2, -1, 1),
-      y: clamp((event.clientY / window.innerHeight - 0.5) * 2, -1, 1),
-    }
-  }
 
   const tracePath = (name: string, side: 'L' | 'R', props: Record<string, string | number>) => (
     <path
@@ -386,20 +316,9 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
       role="dialog"
       aria-modal="true"
       aria-label="entering german+"
-      data-intro-phase="wormhole"
-      onPointerMove={onPointerMove}
+      data-intro-phase="plus"
     >
-      <div ref={collapseRef} className="absolute inset-0" style={{ willChange: 'transform, clip-path' }}>
-        <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 h-full w-full bg-ink" aria-hidden />
-        <div
-          className="pointer-events-none absolute inset-0"
-          aria-hidden
-          style={{ background: 'radial-gradient(ellipse at 50% 48%, transparent 38%, rgba(7,5,3,0.55) 100%)' }}
-        />
-      </div>
-
       <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible" aria-hidden>
-        <circle ref={irisRef} fill="none" stroke="#ffb867" strokeWidth="1" style={{ opacity: 0 }} />
         <line ref={threadGlowRef} stroke="#ffb867" strokeWidth="4" strokeLinecap="round" opacity="0.18" style={{ opacity: 0 }} />
         <line ref={threadRef} stroke="#f4f2ec" strokeWidth="1.25" strokeLinecap="round" style={{ opacity: 0 }} />
         {(['L', 'R'] as const).map((side) => [
@@ -430,6 +349,17 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
           opacity: 0,
           background:
             'radial-gradient(circle, #fffaf2 0, #f6e3c9 4%, rgba(255,184,103,0.6) 9%, rgba(255,184,103,0.16) 26%, rgba(255,184,103,0.05) 45%, transparent 68%)',
+        }}
+        aria-hidden
+      />
+
+      <div
+        ref={glintRef}
+        className="pointer-events-none absolute left-0 top-0 size-[80px]"
+        style={{
+          opacity: 0,
+          background:
+            'radial-gradient(circle, rgba(255,240,220,0.9) 0, rgba(255,184,103,0.35) 12%, transparent 45%), linear-gradient(90deg, transparent 20%, rgba(255,214,170,0.7) 50%, transparent 80%) center / 100% 1px no-repeat, linear-gradient(180deg, transparent 20%, rgba(255,214,170,0.7) 50%, transparent 80%) center / 1px 100% no-repeat',
         }}
         aria-hidden
       />

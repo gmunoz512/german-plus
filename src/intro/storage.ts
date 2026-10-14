@@ -35,7 +35,7 @@ function params() {
 
 export function shouldPlayIntro(): boolean {
   const q = params()
-  if (q.get('introForce') === '1' || q.get('introWarp') != null || q.get('introT') != null) {
+  if (q.get('introForce') === '1' || q.get('introT') != null) {
     return true
   }
   if (hasCompletedIntro()) return false
@@ -46,15 +46,6 @@ export function shouldPlayIntro(): boolean {
     return false
   }
   return true
-}
-
-/** debug: freeze the wormhole at a warp value (0..0.99) */
-export function readFrozenWarp(): number | null {
-  const raw = params().get('introWarp')
-  if (raw == null || raw === '') return null
-  const n = Number(raw)
-  if (!Number.isFinite(n)) return null
-  return Math.max(0, Math.min(0.99, n))
 }
 
 /** debug: freeze the whole sequence at t ms */
