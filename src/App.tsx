@@ -610,6 +610,19 @@ export default function App() {
               </li>
               <li className="border-t border-line-soft">
                 <a
+                  href="https://github.com/gmunoz512/SoundPhotoTest"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between gap-4 py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                >
+                  <span className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] group-hover:text-accent transition-colors">
+                    safekeep
+                  </span>
+                  <ArrowUpRight className="size-4 text-fog group-hover:text-accent transition-colors" aria-hidden />
+                </a>
+              </li>
+              <li className="border-t border-line-soft">
+                <a
                   href="https://github.com/gmunoz512/mars-sky"
                   target="_blank"
                   rel="noopener noreferrer"
