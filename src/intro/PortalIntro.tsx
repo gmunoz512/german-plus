@@ -1,6 +1,6 @@
 import { useEffect, useRef, type RefObject } from 'react'
 import { traceFrame, type MarkId } from './frameGeometry'
-import { markIntroComplete, readFrozenTime } from './storage'
+import { readFrozenTime } from './storage'
 import {
   END_MS,
   P,
@@ -123,7 +123,6 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
       if (done) return
       done = true
       cancelAnimationFrame(raf)
-      markIntroComplete()
       cbs.current.onComplete(skipped)
     }
 

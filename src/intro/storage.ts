@@ -1,34 +1,3 @@
-const STORAGE_KEY = 'german-plus-intro-complete'
-
-// Returning visitors skip the intro: remembered across visits (localStorage),
-// with sessionStorage as a fallback where localStorage is blocked.
-// ?introForce=1 always replays it.
-
-function read(store: () => Storage): boolean {
-  try {
-    return store().getItem(STORAGE_KEY) === '1'
-  } catch {
-    return false
-  }
-}
-
-function write(store: () => Storage) {
-  try {
-    store().setItem(STORAGE_KEY, '1')
-  } catch {
-    // private mode / quota
-  }
-}
-
-export function hasCompletedIntro(): boolean {
-  return read(() => localStorage) || read(() => sessionStorage)
-}
-
-export function markIntroComplete(): void {
-  write(() => localStorage)
-  write(() => sessionStorage)
-}
-
 function params() {
   return new URLSearchParams(window.location.search)
 }
@@ -38,13 +7,9 @@ export function shouldPlayIntro(): boolean {
   if (q.get('introForce') === '1' || q.get('introT') != null) {
     return true
   }
-  if (hasCompletedIntro()) return false
   // deep links (#products etc.) go straight to the section
   if (window.location.hash.length > 1) return false
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    markIntroComplete()
-    return false
-  }
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false
   return true
 }
 
