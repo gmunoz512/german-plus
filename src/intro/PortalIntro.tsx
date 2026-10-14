@@ -25,11 +25,11 @@ type PortalIntroProps = {
   onComplete: (skipped: boolean) => void
 }
 
-const ACCENT = [212, 165, 116]
-const MARK = [74, 74, 80]
-const HERO_LINE = [31, 31, 35]
-const LINE_HOT = [92, 88, 84]
-const LINE = [42, 42, 46]
+const ACCENT = [255, 184, 103]
+const MARK = [138, 104, 72]
+const HERO_LINE = [50, 38, 30]
+const LINE_HOT = [176, 128, 84]
+const LINE = [90, 67, 52]
 const mix = (a: number[], b: number[], t: number) =>
   `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], t))).join(',')})`
 
@@ -394,33 +394,33 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
         <div
           className="pointer-events-none absolute inset-0"
           aria-hidden
-          style={{ background: 'radial-gradient(ellipse at 50% 48%, transparent 38%, rgba(10,10,11,0.55) 100%)' }}
+          style={{ background: 'radial-gradient(ellipse at 50% 48%, transparent 38%, rgba(7,5,3,0.55) 100%)' }}
         />
       </div>
 
       <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible" aria-hidden>
-        <circle ref={irisRef} fill="none" stroke="#d4a574" strokeWidth="1" style={{ opacity: 0 }} />
-        <line ref={threadGlowRef} stroke="#d4a574" strokeWidth="4" strokeLinecap="round" opacity="0.18" style={{ opacity: 0 }} />
-        <line ref={threadRef} stroke="#f1dcc0" strokeWidth="1.25" strokeLinecap="round" style={{ opacity: 0 }} />
+        <circle ref={irisRef} fill="none" stroke="#ffb867" strokeWidth="1" style={{ opacity: 0 }} />
+        <line ref={threadGlowRef} stroke="#ffb867" strokeWidth="4" strokeLinecap="round" opacity="0.18" style={{ opacity: 0 }} />
+        <line ref={threadRef} stroke="#f4f2ec" strokeWidth="1.25" strokeLinecap="round" style={{ opacity: 0 }} />
         {(['L', 'R'] as const).map((side) => [
           tracePath('base', side, { stroke: 'var(--frame-line)', strokeWidth: 1 }),
-          tracePath('trail', side, { stroke: '#d4a574', strokeWidth: 1, strokeOpacity: 0.16 }),
-          tracePath('wake', side, { stroke: '#d4a574', strokeWidth: 1, strokeOpacity: 0.3 }),
-          tracePath('glow', side, { stroke: '#d4a574', strokeWidth: 4, strokeOpacity: 0.16, strokeLinecap: 'round' }),
-          tracePath('head', side, { stroke: '#f1dcc0', strokeWidth: 1.25, strokeLinecap: 'round' }),
+          tracePath('trail', side, { stroke: '#ffb867', strokeWidth: 1, strokeOpacity: 0.16 }),
+          tracePath('wake', side, { stroke: '#ffb867', strokeWidth: 1, strokeOpacity: 0.3 }),
+          tracePath('glow', side, { stroke: '#ffb867', strokeWidth: 4, strokeOpacity: 0.16, strokeLinecap: 'round' }),
+          tracePath('head', side, { stroke: '#f4f2ec', strokeWidth: 1.25, strokeLinecap: 'round' }),
         ])}
       </svg>
 
       <div
         ref={flareHRef}
         className="pointer-events-none absolute left-0 top-0 h-px w-[200px]"
-        style={{ opacity: 0, background: 'linear-gradient(90deg, transparent, rgba(241,220,192,0.95) 50%, transparent)' }}
+        style={{ opacity: 0, background: 'linear-gradient(90deg, transparent, rgba(244,242,236,0.95) 50%, transparent)' }}
         aria-hidden
       />
       <div
         ref={flareVRef}
         className="pointer-events-none absolute left-0 top-0 h-[200px] w-px"
-        style={{ opacity: 0, background: 'linear-gradient(180deg, transparent, rgba(241,220,192,0.95) 50%, transparent)' }}
+        style={{ opacity: 0, background: 'linear-gradient(180deg, transparent, rgba(244,242,236,0.95) 50%, transparent)' }}
         aria-hidden
       />
       <div
@@ -429,7 +429,7 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
         style={{
           opacity: 0,
           background:
-            'radial-gradient(circle, #fffaf2 0, #f6e3c9 4%, rgba(212,165,116,0.6) 9%, rgba(212,165,116,0.16) 26%, rgba(212,165,116,0.05) 45%, transparent 68%)',
+            'radial-gradient(circle, #fffaf2 0, #f6e3c9 4%, rgba(255,184,103,0.6) 9%, rgba(255,184,103,0.16) 26%, rgba(255,184,103,0.05) 45%, transparent 68%)',
         }}
         aria-hidden
       />
@@ -437,7 +437,7 @@ export default function PortalIntro({ pageRef, onInteractive, onComplete }: Port
       <button
         ref={skipRef}
         type="button"
-        className="absolute bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))] z-20 text-xs tracking-wide text-white/30 transition-opacity duration-200 hover:text-white/70"
+        className="absolute bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))] z-20 text-xs tracking-wide text-paper/35 transition-opacity duration-200 hover:text-paper/75"
       >
         skip
       </button>

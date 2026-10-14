@@ -4,7 +4,7 @@ const corners: MarkId[] = ['tl', 'tr', 'bl', 'br']
 const ticks: MarkId[] = ['t', 'r', 'b', 'l']
 
 /**
- * Hairline rounded frame pinned to the viewport (safe-area aware), black outside,
+ * Hairline rounded frame pinned to the viewport (safe-area aware), cocoa outside,
  * with + marks in the corners and small ticks at the edge midpoints on wider screens.
  * Same proportions as the frame on intergalactic scale.
  */
