@@ -49,6 +49,10 @@ export default function EssayProgress() {
       frame = 0
       const el = document.querySelector<HTMLElement>('[data-essay-body]')
       if (el) observer.observe(el)
+      const rect = el?.getBoundingClientRect()
+      const inView = !!rect && rect.bottom > 0 && rect.top < window.innerHeight
+      root.style.opacity = inView ? '1' : '0'
+      root.setAttribute('aria-hidden', inView ? 'false' : 'true')
       const ratio = el ? readProgress(el) : 0
       bar.style.transform = `scaleX(${ratio})`
       const pct = Math.round(ratio * 100)
@@ -86,8 +90,9 @@ export default function EssayProgress() {
       aria-valuemax={100}
       aria-valuenow={0}
       aria-valuetext="0 percent"
-      className="pointer-events-none fixed inset-x-0 z-50"
-      style={{ top: 'env(safe-area-inset-top, 0px)' }}
+      className="pointer-events-none fixed inset-x-0 z-50 transition-opacity duration-200"
+      aria-hidden="true"
+      style={{ top: 'env(safe-area-inset-top, 0px)', opacity: 0 }}
     >
       <div className="h-[3px] w-full overflow-hidden">
         <div
