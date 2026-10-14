@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { ArrowUpRight, ChevronDown, ExternalLink, Eye, EyeOff } from 'lucide-react'
+import { ArrowUpRight, ExternalLink, Eye, EyeOff } from 'lucide-react'
 import { essays } from './essays'
 import EssayProgress from './EssayProgress'
 import PortalIntro from './intro/PortalIntro'
@@ -105,7 +105,7 @@ const safekeepBits = [
 
 function EyeToggle({ open, label }: { open: boolean; label: string }) {
   return (
-    <span className="ml-auto inline-flex size-8 items-center justify-center rounded-full text-fog transition-colors duration-200 group-hover:text-mist group-hover:bg-paper/5 group-active:bg-paper/10">
+    <span className="ml-auto -my-[6px] -mr-[6px] shrink-0 inline-flex size-8 items-center justify-center rounded-full text-fog transition-colors duration-200 group-hover:text-mist group-hover:bg-paper/5 group-active:bg-paper/10">
       <span className="sr-only">{open ? `less about ${label}` : `more about ${label}`}</span>
       {open ? <EyeOff className="size-[18px]" aria-hidden /> : <Eye className="size-[18px]" aria-hidden />}
     </span>
@@ -114,7 +114,7 @@ function EyeToggle({ open, label }: { open: boolean; label: string }) {
 
 function StatusPill({ status }: { status: string }) {
   return (
-    <span className="inline-flex items-center rounded-full px-2.5 py-0.5 font-sans text-[11px] font-medium tracking-wide border border-line text-fog lowercase">
+    <span className="inline-flex items-center rounded-full px-2.5 py-0.5 font-sans text-meta font-medium tracking-wide border border-line text-fog lowercase">
       {status}
     </span>
   )
@@ -184,7 +184,7 @@ export default function App() {
 
         <main id="top">
           <section data-hero className="pt-10 sm:pt-14 pb-8 sm:pb-10 border-b border-line-soft">
-            <h1 className={`${fadeUp('fade-up-delay-1')} font-serif text-[clamp(2.75rem,8vw,4.5rem)] leading-[1.05] tracking-tight text-paper text-balance normal-case`}>
+            <h1 className={`${fadeUp('fade-up-delay-1')} font-serif text-display leading-[1.05] tracking-tight text-paper text-balance normal-case`}>
               <span data-reveal="1" className="inline-block">german</span>
               <span data-intro-plus className="text-accent">+</span>
             </h1>
@@ -212,10 +212,10 @@ export default function App() {
 
           <div data-reveal="3" className="md:grid md:grid-cols-2 md:gap-x-12 md:items-start md:[grid-template-areas:'about_products'_'thoughts_fun']">
           <section id="about" className="md:[grid-area:about] py-10 sm:py-12 border-b border-line-soft md:border-b-0">
-            <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
+            <h2 className="font-serif text-heading leading-[1.15] text-paper tracking-tight text-balance">
               about
             </h2>
-            <div className="mt-4 space-y-4 max-w-xl text-[16px] leading-[1.55] text-body">
+            <div className="mt-4 space-y-4 max-w-xl text-base leading-[1.55] text-body">
               <p>
                 i want to eventually bring everything that&apos;s in my head to
                 reality. usually i approach everything from first principles,
@@ -240,10 +240,10 @@ export default function App() {
           </section>
 
           <section id="products" className="md:[grid-area:products] py-10 sm:py-12 border-b border-line-soft md:border-b-0 md:border-l md:border-line-soft md:pl-10">
-            <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
+            <h2 className="font-serif text-heading leading-[1.15] text-paper tracking-tight text-balance">
               products
             </h2>
-            <p className="mt-3 max-w-lg font-mono lowercase text-[13px] tracking-[0.15em] text-fog">
+            <p className="mt-3 max-w-lg font-mono lowercase text-meta tracking-[0.15em] text-fog">
               my rabbit holes
             </p>
 
@@ -256,11 +256,11 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="font-mono lowercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">stackd</h3>
+                    <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] whitespace-nowrap">stackd</h3>
                     <StatusPill status="draft live" />
                     <EyeToggle open={stackdOpen} label="stackd" />
                   </div>
-                  <p className="mt-2 text-[16px] leading-[1.55] text-body max-w-xl">
+                  <p className="mt-2 text-base leading-[1.55] text-body max-w-xl">
                     three-sided marketplace for str hosts, local experience and
                     restaurant vendors, and guests, with jc, the trip planner,
                     built in.
@@ -270,7 +270,7 @@ export default function App() {
                 {stackdOpen && (
                   <div className="pb-6 -mx-3 px-3">
                     <div className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
-                      <p className="text-sm text-mist max-w-lg">
+                      <p className="text-sm leading-[1.55] text-body max-w-lg">
                         one marketplace. three sides. an agent that plans inside
                         it, not beside it.
                       </p>
@@ -280,14 +280,14 @@ export default function App() {
                             key={p.num}
                             className="grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-8 py-4 border-t border-line-soft first:border-t-0 first:pt-0"
                           >
-                            <span className="font-mono text-xs text-fog pt-1 tabular-nums normal-case">
+                            <span className="font-mono lowercase text-meta tracking-[0.15em] text-fog pt-1 tabular-nums">
                               {p.num}
                             </span>
                             <div>
-                              <h4 className="text-base font-medium text-paper">
+                              <h4 className="text-base leading-[1.55] font-medium text-paper">
                                 {p.title}
                               </h4>
-                              <p className="mt-1.5 text-[14px] leading-relaxed text-mist max-w-xl">
+                              <p className="mt-1.5 text-sm leading-[1.55] text-body max-w-xl">
                                 {p.body}
                               </p>
                             </div>
@@ -316,11 +316,11 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="font-mono lowercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">mars</h3>
+                    <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] whitespace-nowrap">mars</h3>
                     <StatusPill status="live" />
                     <EyeToggle open={marsOpen} label="mars" />
                   </div>
-                  <p className="mt-2 text-[16px] leading-[1.55] text-body max-w-xl">
+                  <p className="mt-2 text-base leading-[1.55] text-body max-w-xl">
                     a weekend toy: spin mars, drop your birthday, stand on
                     jezero and look up. no pitch deck energy.
                   </p>
@@ -329,7 +329,7 @@ export default function App() {
                 {marsOpen && (
                   <div className="pb-6 -mx-3 px-3">
                     <div className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
-                      <p className="text-sm text-mist max-w-lg">
+                      <p className="text-sm leading-[1.55] text-body max-w-lg">
                         built for fun. real nasa pixels. your birthday, from
                         another planet.
                       </p>
@@ -339,14 +339,14 @@ export default function App() {
                             key={p.num}
                             className="grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-8 py-4 border-t border-line-soft first:border-t-0 first:pt-0"
                           >
-                            <span className="font-mono text-xs text-fog pt-1 tabular-nums normal-case">
+                            <span className="font-mono lowercase text-meta tracking-[0.15em] text-fog pt-1 tabular-nums">
                               {p.num}
                             </span>
                             <div>
-                              <h4 className="text-base font-medium text-paper">
+                              <h4 className="text-base leading-[1.55] font-medium text-paper">
                                 {p.title}
                               </h4>
-                              <p className="mt-1.5 text-[14px] leading-relaxed text-mist max-w-xl">
+                              <p className="mt-1.5 text-sm leading-[1.55] text-body max-w-xl">
                                 {p.body}
                               </p>
                             </div>
@@ -374,11 +374,11 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="font-mono lowercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">intergalactic scale</h3>
+                    <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] whitespace-nowrap">intergalactic scale</h3>
                     <StatusPill status="live" />
                     <EyeToggle open={scaleOpen} label="intergalactic scale" />
                   </div>
-                  <p className="mt-2 text-[16px] leading-[1.55] text-body max-w-xl">
+                  <p className="mt-2 text-base leading-[1.55] text-body max-w-xl">
                     swipe from a dwarf planet to the edge of the observable
                     universe, one object at a time, all at true scale.
                   </p>
@@ -387,7 +387,7 @@ export default function App() {
                 {scaleOpen && (
                   <div className="pb-6 -mx-3 px-3">
                     <div className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
-                      <p className="text-sm text-mist max-w-lg">
+                      <p className="text-sm leading-[1.55] text-body max-w-lg">
                         a slideshow of space, smallest to biggest. each slide puts
                         one object next to the one before it at true size, from a
                         dwarf planet up to the whole observable universe, so you
@@ -399,14 +399,14 @@ export default function App() {
                             key={p.num}
                             className="grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-8 py-4 border-t border-line-soft first:border-t-0 first:pt-0"
                           >
-                            <span className="font-mono text-xs text-fog pt-1 tabular-nums normal-case">
+                            <span className="font-mono lowercase text-meta tracking-[0.15em] text-fog pt-1 tabular-nums">
                               {p.num}
                             </span>
                             <div>
-                              <h4 className="text-base font-medium text-paper">
+                              <h4 className="text-base leading-[1.55] font-medium text-paper">
                                 {p.title}
                               </h4>
-                              <p className="mt-1.5 text-[14px] leading-relaxed text-mist max-w-xl">
+                              <p className="mt-1.5 text-sm leading-[1.55] text-body max-w-xl">
                                 {p.body}
                               </p>
                             </div>
@@ -414,12 +414,12 @@ export default function App() {
                         ))}
                       </div>
                       <figure className="mt-5 border-l border-accent/60 pl-4">
-                        <p className="text-xs text-fog tracking-wider">fun fact</p>
-                        <blockquote className="mt-1.5 text-[16px] leading-[1.55] text-body max-w-lg">
+                        <p className="font-mono lowercase text-meta tracking-[0.15em] text-fog">fun fact</p>
+                        <blockquote className="mt-1.5 text-base leading-[1.55] text-body max-w-lg">
                           “if the sun were the size of a hot tub, earth would be
                           the size of a sesame seed.”
                         </blockquote>
-                        <figcaption className="mt-2 text-xs text-fog">
+                        <figcaption className="mt-2 font-mono lowercase text-meta tracking-[0.15em] text-fog">
                           — neil degrasse tyson &amp; lindsey nyx walker, <cite className="not-italic">lost in space: 5,000 facts for navigating the universe</cite>
                         </figcaption>
                       </figure>
@@ -444,11 +444,11 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="font-mono lowercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">safekeep</h3>
+                    <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] whitespace-nowrap">safekeep</h3>
                     <StatusPill status="testflight beta" />
                     <EyeToggle open={safekeepOpen} label="safekeep" />
                   </div>
-                  <p className="mt-2 text-[16px] leading-[1.55] text-body max-w-xl">
+                  <p className="mt-2 text-base leading-[1.55] text-body max-w-xl">
                     add a voice note to a photo, remember it forever.
                   </p>
                 </button>
@@ -465,7 +465,7 @@ export default function App() {
                           loading="lazy"
                           className="size-14 shrink-0 rounded-[14px] border border-line"
                         />
-                        <p className="text-sm text-mist max-w-lg">
+                        <p className="text-sm leading-[1.55] text-body max-w-lg">
                           a native iphone app (swiftui, ios 16+). it saves a voice
                           note into a live photo copy of your picture, so you can
                           press and hold to hear it.
@@ -477,21 +477,21 @@ export default function App() {
                             key={p.num}
                             className="grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-8 py-4 border-t border-line-soft first:border-t-0 first:pt-0"
                           >
-                            <span className="font-mono text-xs text-fog pt-1 tabular-nums normal-case">
+                            <span className="font-mono lowercase text-meta tracking-[0.15em] text-fog pt-1 tabular-nums">
                               {p.num}
                             </span>
                             <div>
-                              <h4 className="text-base font-medium text-paper">
+                              <h4 className="text-base leading-[1.55] font-medium text-paper">
                                 {p.title}
                               </h4>
-                              <p className="mt-1.5 text-[14px] leading-relaxed text-mist max-w-xl">
+                              <p className="mt-1.5 text-sm leading-[1.55] text-body max-w-xl">
                                 {p.body}
                               </p>
                             </div>
                           </article>
                         ))}
                       </div>
-                      <p className="mt-5 text-sm text-mist">
+                      <p className="mt-5 text-sm leading-[1.55] text-body">
                         in testflight (beta) for now. no app store link yet.
                       </p>
                       <div className="mt-3 flex flex-wrap items-center gap-5 text-sm">
@@ -512,48 +512,48 @@ export default function App() {
           </section>
 
           <section id="for-fun" className="md:[grid-area:fun] py-10 sm:py-12 border-b border-line-soft md:border-b-0 md:border-l md:border-line-soft md:pl-10 md:pt-0">
-            <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
+            <h2 className="font-serif text-heading leading-[1.15] text-paper tracking-tight text-balance">
               fun builds: github
             </h2>
-            <p className="mt-3 max-w-lg font-mono lowercase text-[13px] tracking-[0.15em] text-fog">
+            <p className="mt-3 max-w-lg font-mono lowercase text-meta tracking-[0.15em] text-fog">
               weekend builds, side quests, and interest.. more soon
             </p>
 
-            <ul className="mt-6 space-y-0 border-t border-line-soft">
-              <li className="border-b border-line-soft">
+            <ul className="mt-6 space-y-0">
+              <li className="border-t border-line-soft">
                 <a
                   href="https://github.com/gmunoz512/stackbnb-60920"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between gap-4 py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
-                  <span className="text-lg font-medium text-paper group-hover:text-accent transition-colors">
+                  <span className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] group-hover:text-accent transition-colors">
                     stackd
                   </span>
                   <ArrowUpRight className="size-4 text-fog group-hover:text-accent transition-colors" aria-hidden />
                 </a>
               </li>
-              <li className="border-b border-line-soft">
+              <li className="border-t border-line-soft">
                 <a
                   href="https://github.com/gmunoz512/mars-sky"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between gap-4 py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
-                  <span className="text-lg font-medium text-paper group-hover:text-accent transition-colors">
+                  <span className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] group-hover:text-accent transition-colors">
                     birthday in mars
                   </span>
                   <ArrowUpRight className="size-4 text-fog group-hover:text-accent transition-colors" aria-hidden />
                 </a>
               </li>
-              <li className="border-b border-line-soft">
+              <li className="border-t border-line-soft">
                 <a
                   href="https://github.com/gmunoz512/intergalactic-scale"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between gap-4 py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
-                  <span className="text-lg font-medium text-paper group-hover:text-accent transition-colors">
+                  <span className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] group-hover:text-accent transition-colors">
                     intergalactic scale
                   </span>
                   <ArrowUpRight className="size-4 text-fog group-hover:text-accent transition-colors" aria-hidden />
@@ -563,10 +563,10 @@ export default function App() {
           </section>
 
           <section id="thoughts" className="md:[grid-area:thoughts] py-10 sm:py-12 border-b border-line-soft md:border-b-0 md:pt-0">
-            <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
+            <h2 className="font-serif text-heading leading-[1.15] text-paper tracking-tight text-balance">
               behind the veil
             </h2>
-            <p className="mt-3 max-w-lg font-mono lowercase text-[13px] tracking-[0.15em] text-fog">
+            <p className="mt-3 max-w-lg font-mono lowercase text-meta tracking-[0.15em] text-fog">
               short writings
             </p>
 
@@ -585,40 +585,24 @@ export default function App() {
                       }
                       className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                     >
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-mono lowercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">
+                      <div className="flex items-start gap-3">
+                        <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal leading-[1.4] text-paper text-pretty">
                           {essay.title}
                         </h3>
-                        <span className="text-xs text-fog tracking-wider">
-                          {essay.date}
-                        </span>
-                        <ChevronDown
-                          className={`ml-auto size-4 text-fog transition-transform duration-200 ${
-                            isOpen ? 'rotate-180' : ''
-                          }`}
-                          aria-hidden
-                        />
+                        <EyeToggle open={isOpen} label={essay.title} />
                       </div>
+                      <p className="mt-1 font-mono lowercase text-meta tracking-[0.15em] text-fog whitespace-nowrap">{essay.date}</p>
                       {!isOpen && (
-                        <p className="mt-2 text-[16px] leading-[1.55] text-body max-w-xl">
+                        <p className="mt-2 text-base leading-[1.55] text-body max-w-xl">
                           {essay.paragraphs[0]}
                         </p>
                       )}
-                      <span className="mt-3 inline-flex items-center gap-1 text-sm text-accent">
-                        {isOpen ? 'close' : 'read'}
-                        <ChevronDown
-                          className={`size-3.5 transition-transform duration-200 ${
-                            isOpen ? 'rotate-180' : ''
-                          }`}
-                          aria-hidden
-                        />
-                      </span>
                     </button>
 
                     {isOpen && (
                       <div className="pb-6 -mx-3 px-3">
                         <article className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
-                          <div data-essay-body className="space-y-4 max-w-xl text-[16px] leading-[1.55] text-body">
+                          <div data-essay-body className="space-y-4 max-w-xl text-base leading-[1.55] text-body">
                             {essay.paragraphs.map((paragraph) => (
                               <p key={paragraph}>{paragraph}</p>
                             ))}
@@ -636,8 +620,8 @@ export default function App() {
 
         <footer data-reveal="4" className="py-8 sm:py-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <p className="font-serif text-lg text-paper normal-case">german<span className="text-accent">+</span></p>
-            <p className="mt-1 text-sm text-fog">new york · building</p>
+            <p className="font-serif text-xl text-paper tracking-tight normal-case">german<span className="text-accent">+</span></p>
+            <p className="mt-1 font-mono lowercase text-meta tracking-[0.15em] text-fog">new york · building</p>
           </div>
           <div className="flex flex-wrap items-center gap-5">
             <a

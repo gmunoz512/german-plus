@@ -5,6 +5,14 @@
   --font-text: "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, monospace;
   --color-body: #a9a5a0;
+  /* type scale: major third (1.25) on 16px. 6 steps, nothing else. */
+  --text-meta: 12px;      /* mono labels, dates, badges */
+  --text-sm: 14px;        /* nav, secondary ui */
+  --text-title: 14px;     /* mono project / essay titles */
+  --text-base: 16px;      /* body */
+  --text-xl: 20px;        /* serif logo */
+  --text-heading: 32px;   /* serif section heads */
+  --text-display: clamp(44px, 12vw, 56px); /* serif name */
   --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
   --color-ink: #070503;
   --color-ink-raised: #2c1e16;
