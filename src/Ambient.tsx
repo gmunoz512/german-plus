@@ -70,9 +70,8 @@ function Field() {
       canvas.height = h * dpr
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       seed()
+      if (reduced) raf = requestAnimationFrame(draw)
     }
-    resize()
-    window.addEventListener('resize', resize)
 
     let raf = 0
     let last = 0
@@ -115,9 +114,9 @@ function Field() {
         }
       }
 
-      if (frame && !reduced) {
+      if (frame) {
         const rect = frame.getBoundingClientRect()
-        const d = now / 48000
+        const d = reduced ? 0.12 : now / 48000
         for (const offset of [0, 0.5]) {
           const p = pointOnRect(rect, d + offset)
           const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 130)
@@ -131,6 +130,9 @@ function Field() {
 
       if (!reduced) raf = requestAnimationFrame(draw)
     }
+
+    resize()
+    window.addEventListener('resize', resize)
 
     const start = () => {
       cancelAnimationFrame(raf)
