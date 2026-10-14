@@ -49,7 +49,7 @@ function Field() {
     let h = 0
     let motes: Mote[] = []
     const seed = () => {
-      const count = Math.max(48, Math.round((w * h) / 14000))
+      const count = Math.max(24, Math.round((w * h) / 28000))
       motes = Array.from({ length: count }, (_, i) => ({
         x: marginX(w),
         y: Math.random() * h,
@@ -119,12 +119,13 @@ function Field() {
         const d = reduced ? 0.12 : now / 48000
         for (const offset of [0, 0.5]) {
           const p = pointOnRect(rect, d + offset)
-          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 130)
-          g.addColorStop(0, `rgba(255,184,103,${0.34 * fade})`)
-          g.addColorStop(0.45, `rgba(255,184,103,${0.12 * fade})`)
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 13)
+          g.addColorStop(0, `rgba(255,246,232,${0.95 * fade})`)
+          g.addColorStop(0.18, `rgba(255,214,160,${0.8 * fade})`)
+          g.addColorStop(0.45, `rgba(255,184,103,${0.3 * fade})`)
           g.addColorStop(1, 'rgba(255,184,103,0)')
           ctx.fillStyle = g
-          ctx.fillRect(p.x - 130, p.y - 130, 260, 260)
+          ctx.fillRect(p.x - 13, p.y - 13, 26, 26)
         }
       }
 
