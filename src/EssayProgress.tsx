@@ -92,14 +92,14 @@ export default function EssayProgress() {
       <div className="h-[3px] w-full overflow-hidden">
         <div
           ref={barRef}
-          className="h-full w-full origin-left bg-[#d4a8f0]"
+          className="h-full w-full origin-left bg-[#9fd6a6]"
           style={{ transform: 'scaleX(0)' }}
         />
       </div>
       <span
         ref={labelRef}
         aria-hidden="true"
-        className="fixed top-[max(8px,env(safe-area-inset-top))] right-[max(12px,env(safe-area-inset-right))] text-[11px] leading-none font-medium tabular-nums tracking-wide text-[#d4a8f0]"
+        className="fixed top-[max(8px,env(safe-area-inset-top))] right-[max(12px,env(safe-area-inset-right))] text-[11px] leading-none font-medium tabular-nums tracking-wide text-[#9fd6a6]"
       >
         0%
       </span>

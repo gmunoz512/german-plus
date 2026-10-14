@@ -626,7 +626,7 @@ export default function App() {
               behind the veil
             </h2>
             <p className="mt-3 max-w-lg text-mist">
-              short writings from building to thoughts on the future of ai
+              short writings
             </p>
 
             <ul className="mt-6 space-y-0">
