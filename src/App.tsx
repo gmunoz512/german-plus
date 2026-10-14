@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { ArrowUpRight, ExternalLink, Eye, EyeOff } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, ExternalLink, Eye, EyeOff } from 'lucide-react'
 import { essays } from './essays'
 import EssayProgress from './EssayProgress'
 import PortalIntro from './intro/PortalIntro'
@@ -80,6 +80,29 @@ const scaleBits = [
   },
 ]
 
+const empsizeBits = [
+  {
+    num: '01',
+    title: 'safari and chrome',
+    body: 'works in safari on iphone, ipad and mac, plus chrome.',
+  },
+  {
+    num: '02',
+    title: 'one big switch',
+    body: 'tap the icon, flip it on for the site you are on.',
+  },
+  {
+    num: '03',
+    title: 'tune the bold',
+    body: 'choose how much of each word gets bolded.',
+  },
+  {
+    num: '04',
+    title: 'stays out of the way',
+    body: 'leaves code, inputs and links alone. no tracking, no network.',
+  },
+]
+
 const safekeepBits = [
   {
     num: '01',
@@ -125,6 +148,7 @@ export default function App() {
   const [marsOpen, setMarsOpen] = useState(false)
   const [scaleOpen, setScaleOpen] = useState(false)
   const [safekeepOpen, setSafekeepOpen] = useState(false)
+  const [empsizeOpen, setEmpsizeOpen] = useState(false)
   const [openEssay, setOpenEssay] = useState<string | null>(null)
   const [playIntro] = useState(shouldPlayIntro)
   const [intro, setIntro] = useState<'playing' | 'interactive' | 'done'>(() =>
@@ -508,6 +532,67 @@ export default function App() {
                   </div>
                 )}
               </li>
+              <li id="empsize" className="border-t border-line-soft scroll-mt-6">
+                <button
+                  type="button"
+                  aria-expanded={empsizeOpen}
+                  onClick={() => setEmpsizeOpen((o) => !o)}
+                  className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                >
+                  <div className="flex items-center gap-3">
+                    <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] whitespace-nowrap">empsize</h3>
+                    <StatusPill status="testflight beta" />
+                    <EyeToggle open={empsizeOpen} label="empsize" />
+                  </div>
+                  <p className="mt-2 text-base leading-[1.55] text-body max-w-xl">
+                    bolds the start of every word so your eyes glide through text.
+                  </p>
+                </button>
+
+                {empsizeOpen && (
+                  <div className="pb-6 -mx-3 px-3">
+                    <div className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
+                      <div className="flex items-start gap-4">
+                        <img
+                          src={`${import.meta.env.BASE_URL}empsize-icon.png`}
+                          alt="empsize app icon"
+                          width={56}
+                          height={56}
+                          loading="lazy"
+                          className="size-14 shrink-0 rounded-[14px] border border-line"
+                        />
+                        <p className="text-sm leading-[1.55] text-body max-w-lg">
+                          a safari and chrome extension. it bolds the first part of each
+                          word on any page, so you read with less effort.
+                        </p>
+                      </div>
+                      <div className="mt-5 space-y-0">
+                        {empsizeBits.map((p) => (
+                          <article
+                            key={p.num}
+                            className="grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-8 py-4 border-t border-line-soft first:border-t-0 first:pt-0"
+                          >
+                            <span className="font-mono lowercase text-meta tracking-[0.15em] text-fog pt-1 tabular-nums">
+                              {p.num}
+                            </span>
+                            <div>
+                              <h4 className="text-base leading-[1.55] font-medium text-paper">
+                                {p.title}
+                              </h4>
+                              <p className="mt-1.5 text-sm leading-[1.55] text-body max-w-xl">
+                                {p.body}
+                              </p>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                      <p className="mt-5 text-sm leading-[1.55] text-body">
+                        in testflight (beta) for now. no app store link yet.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </li>
             </ul>
           </section>
 
@@ -557,6 +642,18 @@ export default function App() {
                     intergalactic scale
                   </span>
                   <ArrowUpRight className="size-4 text-fog group-hover:text-accent transition-colors" aria-hidden />
+                </a>
+              </li>
+              <li className="border-t border-line-soft">
+                <a
+                  href="#empsize"
+                  onClick={() => setEmpsizeOpen(true)}
+                  className="flex items-center justify-between gap-4 py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                >
+                  <span className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] group-hover:text-accent transition-colors">
+                    empsize
+                  </span>
+                  <ArrowDown className="size-4 text-fog group-hover:text-accent transition-colors" aria-hidden />
                 </a>
               </li>
             </ul>
