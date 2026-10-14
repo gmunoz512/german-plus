@@ -3,6 +3,7 @@ import { ArrowUpRight, ExternalLink, Eye, EyeOff } from 'lucide-react'
 import { Markdown, inline } from './Markdown'
 import { essays } from './essays'
 import EssayProgress from './EssayProgress'
+import Ambient from './Ambient'
 import PortalIntro from './intro/PortalIntro'
 import { shouldPlayIntro } from './intro/storage'
 import SiteFrame from './SiteFrame'
@@ -188,6 +189,7 @@ export default function App() {
         data-reveal="0"
         className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(255,184,103,0.13),_transparent_55%)]"
       />
+      {intro === 'done' && <Ambient />}
 
       <div className="relative mx-auto w-full max-w-3xl md:max-w-6xl px-6 sm:px-8">
         <header data-reveal="0" className={`flex items-center justify-between pt-6 pb-3 ${fadeUp()}`}>
