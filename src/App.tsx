@@ -256,7 +256,7 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="font-mono uppercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">stackd</h3>
+                    <h3 className="font-mono lowercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">stackd</h3>
                     <StatusPill status="draft live" />
                     <EyeToggle open={stackdOpen} label="stackd" />
                   </div>
@@ -316,7 +316,7 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="font-mono uppercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">mars</h3>
+                    <h3 className="font-mono lowercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">mars</h3>
                     <StatusPill status="live" />
                     <EyeToggle open={marsOpen} label="mars" />
                   </div>
@@ -374,7 +374,7 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="font-mono uppercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">intergalactic scale</h3>
+                    <h3 className="font-mono lowercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">intergalactic scale</h3>
                     <StatusPill status="live" />
                     <EyeToggle open={scaleOpen} label="intergalactic scale" />
                   </div>
@@ -444,7 +444,7 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="font-mono uppercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">safekeep</h3>
+                    <h3 className="font-mono lowercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">safekeep</h3>
                     <StatusPill status="testflight beta" />
                     <EyeToggle open={safekeepOpen} label="safekeep" />
                   </div>
@@ -586,7 +586,7 @@ export default function App() {
                       className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                     >
                       <div className="flex items-center gap-3">
-                        <h3 className="font-mono uppercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">
+                        <h3 className="font-mono lowercase text-[14.5px] tracking-[0.15em] font-normal text-paper whitespace-nowrap">
                           {essay.title}
                         </h3>
                         <span className="text-xs text-fog tracking-wider">
