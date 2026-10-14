@@ -20,14 +20,8 @@ export const essays: Essay[] = [
     id: 'four-ways-to-reach',
     title: 'four ways to reach',
     date: 'oct 4, 2026',
-    paragraphs: [
-      "i used to think ambition meant one thing: more. now i think it's more about direction. locked in with the journey being the destination.",
-      "the sprint. stackd connects hosts, vendors, and guests, and there's a long list of reasons to wait before showing it to anyone. i'm trying not to. put it out, watch what people actually do, fix it, and do it again. the plan i'd write today would be wrong by next month anyway.",
-      "the reach. this is going after the version that scares you a little. not the safe, small one you know you can finish. the one where, if it works, it actually matters. most of the time nobody tells you no. you just never ask.",
-      "the dig. picking one thing and staying with it longer than feels normal. no skimming, no moving on once it kind of works. staying until you could explain it to someone who's never heard of it.",
-      "the wander. birthday in mars had no business plan. real rover images from jezero crater, and the night sky as you'd see it standing there. no customers, no roadmap. it was just fun, and i'd do it again in a heartbeat.",
-      "none of these is better than the others. the hard part is noticing which one you're in, and which one you've been avoiding. for me it's the reach.",
-    ],
+    paragraphs: ["ambition isn't a size. it's a direction."],
+    markdown: "i used to think ambition meant one thing: more. now i think it's about direction, locked in, with the journey as the destination. and that journey tends to take one of four shapes.\n\n**the sprint.** stackd connects hosts, vendors, and guests, and there's a long list of reasons to wait before showing it to anyone. i'm trying not to. put it out, watch what people actually do, fix it, and do it again. the plan i'd write today would be wrong by next month anyway.\n\n**the reach.** going after the version that scares you a little. not the safe, small one you know you can finish, but the one that actually matters if it works. most of the time, nobody tells you no. you just never ask.\n\n**the dig.** picking one thing and staying with it longer than feels normal. no skimming, no moving on once it kind of works. staying until you could explain it to someone who's never heard of it.\n\n**the wander.** birthday in mars had no business plan. just real rover images from jezero crater and the night sky as you'd see it standing there. no customers, no roadmap. it was just fun, and i'd do it again in a heartbeat.\n\nnone of these is better than the others. the hard part is noticing which one you're in, and which one you've been avoiding. for me, it's the reach.",
   },
   {
     id: 'more-than-a-resume',
