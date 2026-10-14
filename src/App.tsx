@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { ArrowUpRight, ChevronDown, ExternalLink } from 'lucide-react'
 import { essays } from './essays'
+import EssayProgress from './EssayProgress'
 import PortalIntro from './intro/PortalIntro'
 import { shouldPlayIntro } from './intro/storage'
 import SiteFrame from './SiteFrame'
@@ -147,10 +148,11 @@ export default function App() {
       {...(intro === 'playing' ? { inert: true, 'aria-hidden': true } : {})}
     >
       <SiteFrame />
+      {openEssay ? <EssayProgress key={openEssay} /> : null}
       <div
         aria-hidden
         data-reveal="0"
-        className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,165,116,0.06),_transparent_55%)]"
+        className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(255,184,103,0.13),_transparent_55%)]"
       />
 
       <div className="relative mx-auto w-full max-w-3xl md:max-w-6xl px-6 sm:px-8">
@@ -204,7 +206,7 @@ export default function App() {
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               about
             </h2>
-            <div className="mt-4 space-y-4 max-w-xl text-[15px] sm:text-base leading-relaxed text-fog">
+            <div className="mt-4 space-y-4 max-w-xl text-[15px] sm:text-base leading-relaxed text-mist">
               <p>
                 i want to eventually bring everything that&apos;s in my head to
                 reality. usually i approach everything from first principles,
@@ -232,7 +234,7 @@ export default function App() {
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               products
             </h2>
-            <p className="mt-3 max-w-lg text-fog">
+            <p className="mt-3 max-w-lg text-mist">
               my rabbit holes
             </p>
 
@@ -257,7 +259,7 @@ export default function App() {
                       aria-hidden
                     />
                   </div>
-                  <p className="mt-2 text-[15px] leading-relaxed text-fog max-w-xl">
+                  <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
                     three-sided marketplace for str hosts, local experience and
                     restaurant vendors, and guests, with jc, the trip planner,
                     built in.
@@ -276,7 +278,7 @@ export default function App() {
                 {stackdOpen && (
                   <div className="pb-6 -mx-3 px-3">
                     <div className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
-                      <p className="text-sm text-fog max-w-lg">
+                      <p className="text-sm text-mist max-w-lg">
                         one marketplace. three sides. an agent that plans inside
                         it, not beside it.
                       </p>
@@ -293,7 +295,7 @@ export default function App() {
                               <h4 className="text-base font-medium text-paper">
                                 {p.title}
                               </h4>
-                              <p className="mt-1.5 text-[14px] leading-relaxed text-fog max-w-xl">
+                              <p className="mt-1.5 text-[14px] leading-relaxed text-mist max-w-xl">
                                 {p.body}
                               </p>
                             </div>
@@ -334,7 +336,7 @@ export default function App() {
                       aria-hidden
                     />
                   </div>
-                  <p className="mt-2 text-[15px] leading-relaxed text-fog max-w-xl">
+                  <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
                     a weekend toy: spin mars, drop your birthday, stand on
                     jezero and look up. no pitch deck energy.
                   </p>
@@ -352,7 +354,7 @@ export default function App() {
                 {marsOpen && (
                   <div className="pb-6 -mx-3 px-3">
                     <div className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
-                      <p className="text-sm text-fog max-w-lg">
+                      <p className="text-sm text-mist max-w-lg">
                         built for fun. real nasa pixels. your birthday, from
                         another planet.
                       </p>
@@ -369,7 +371,7 @@ export default function App() {
                               <h4 className="text-base font-medium text-paper">
                                 {p.title}
                               </h4>
-                              <p className="mt-1.5 text-[14px] leading-relaxed text-fog max-w-xl">
+                              <p className="mt-1.5 text-[14px] leading-relaxed text-mist max-w-xl">
                                 {p.body}
                               </p>
                             </div>
@@ -409,7 +411,7 @@ export default function App() {
                       aria-hidden
                     />
                   </div>
-                  <p className="mt-2 text-[15px] leading-relaxed text-fog max-w-xl">
+                  <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
                     swipe from a dwarf planet to the edge of the observable
                     universe, one object at a time, all at true scale.
                   </p>
@@ -427,7 +429,7 @@ export default function App() {
                 {scaleOpen && (
                   <div className="pb-6 -mx-3 px-3">
                     <div className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
-                      <p className="text-sm text-fog max-w-lg">
+                      <p className="text-sm text-mist max-w-lg">
                         a slideshow of space, smallest to biggest. each slide puts
                         one object next to the one before it at true size, from a
                         dwarf planet up to the whole observable universe, so you
@@ -446,7 +448,7 @@ export default function App() {
                               <h4 className="text-base font-medium text-paper">
                                 {p.title}
                               </h4>
-                              <p className="mt-1.5 text-[14px] leading-relaxed text-fog max-w-xl">
+                              <p className="mt-1.5 text-[14px] leading-relaxed text-mist max-w-xl">
                                 {p.body}
                               </p>
                             </div>
@@ -496,7 +498,7 @@ export default function App() {
                       aria-hidden
                     />
                   </div>
-                  <p className="mt-2 text-[15px] leading-relaxed text-fog max-w-xl">
+                  <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
                     add a voice note to a photo, remember it forever.
                   </p>
                   <span className="mt-3 inline-flex items-center gap-1 text-sm text-accent">
@@ -522,7 +524,7 @@ export default function App() {
                           loading="lazy"
                           className="size-14 shrink-0 rounded-[14px] border border-line"
                         />
-                        <p className="text-sm text-fog max-w-lg">
+                        <p className="text-sm text-mist max-w-lg">
                           a native iphone app (swiftui, ios 16+). it saves a voice
                           note into a live photo copy of your picture, so you can
                           press and hold to hear it.
@@ -541,14 +543,14 @@ export default function App() {
                               <h4 className="text-base font-medium text-paper">
                                 {p.title}
                               </h4>
-                              <p className="mt-1.5 text-[14px] leading-relaxed text-fog max-w-xl">
+                              <p className="mt-1.5 text-[14px] leading-relaxed text-mist max-w-xl">
                                 {p.body}
                               </p>
                             </div>
                           </article>
                         ))}
                       </div>
-                      <p className="mt-5 text-sm text-fog">
+                      <p className="mt-5 text-sm text-mist">
                         in testflight (beta) for now. no app store link yet.
                       </p>
                       <div className="mt-3 flex flex-wrap items-center gap-5 text-sm">
@@ -572,7 +574,7 @@ export default function App() {
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               fun builds: github
             </h2>
-            <p className="mt-3 max-w-lg text-fog">
+            <p className="mt-3 max-w-lg text-mist">
               weekend builds, side quests, and interest.. more soon
             </p>
 
@@ -623,7 +625,7 @@ export default function App() {
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               behind the veil
             </h2>
-            <p className="mt-3 max-w-lg text-fog">
+            <p className="mt-3 max-w-lg text-mist">
               short writings from building to thoughts on the future of ai
             </p>
 
@@ -657,7 +659,7 @@ export default function App() {
                         />
                       </div>
                       {!isOpen && (
-                        <p className="mt-2 text-[15px] leading-relaxed text-fog max-w-xl">
+                        <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
                           {essay.paragraphs[0]}
                         </p>
                       )}
@@ -675,7 +677,7 @@ export default function App() {
                     {isOpen && (
                       <div className="pb-6 -mx-3 px-3">
                         <article className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
-                          <div className="space-y-4 max-w-xl text-[15px] sm:text-base leading-relaxed text-fog">
+                          <div data-essay-body className="space-y-4 max-w-xl text-[15px] sm:text-base leading-relaxed text-mist">
                             {essay.paragraphs.map((paragraph) => (
                               <p key={paragraph}>{paragraph}</p>
                             ))}

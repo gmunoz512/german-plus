@@ -16,7 +16,7 @@ export type FlyThroughRenderer = {
   destroy: () => void
 }
 
-const BG = 0x0a0a0b
+const BG = 0x070503
 const TAU = Math.PI * 2
 const CAM_START_Z = 0.55
 const CAM_END_Z = -15.2
@@ -178,11 +178,11 @@ export function attachFlyThrough(
     mobile ? 170 : 340,
     1.45,
     mobile ? 0.055 : 0.048,
-    0xddd9d1,
+    0xe9e5dc,
     0.7,
   )
-  addPoints(mobile ? 55 : 90, 0.95, mobile ? 0.09 : 0.078, 0xd4a574, 0.28)
-  addPoints(mobile ? 36 : 64, 2.05, mobile ? 0.12 : 0.1, 0xb8b8c0, 0.34)
+  addPoints(mobile ? 55 : 90, 0.95, mobile ? 0.09 : 0.078, 0xffb867, 0.28)
+  addPoints(mobile ? 36 : 64, 2.05, mobile ? 0.12 : 0.1, 0xd8d3c8, 0.34)
 
   const lookTarget = new THREE.Vector3()
   let lastW = 0
@@ -248,7 +248,7 @@ export function attachFall2D(
   const mobile = window.innerWidth < 720
   const count = mobile ? 140 : 240
   const specks: Speck[] = []
-  const colors = ['#d8d4cc', '#d4a574', '#a8a8b0']
+  const colors = ['#e9e5dc', '#ffb867', '#d8d3c8']
   for (let i = 0; i < count; i++) {
     specks.push({
       x: (rng() - 0.5) * 2.2,
@@ -279,7 +279,7 @@ export function attachFall2D(
       }
 
       const t = warpEase(warp)
-      ctx.fillStyle = '#0a0a0b'
+      ctx.fillStyle = '#070503'
       ctx.fillRect(0, 0, w, h)
 
       const cx = w * 0.5 + pointerX * w * 0.03 * (1 - warp)
@@ -294,9 +294,9 @@ export function attachFall2D(
         cy,
         Math.max(w, h) * 0.62,
       )
-      well.addColorStop(0, 'rgba(32,32,36,0.35)')
-      well.addColorStop(0.45, 'rgba(10,10,11,0)')
-      well.addColorStop(1, 'rgba(10,10,11,0.55)')
+      well.addColorStop(0, 'rgba(58,40,28,0.35)')
+      well.addColorStop(0.45, 'rgba(7,5,3,0)')
+      well.addColorStop(1, 'rgba(7,5,3,0.55)')
       ctx.fillStyle = well
       ctx.fillRect(0, 0, w, h)
 
