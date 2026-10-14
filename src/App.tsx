@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { ArrowDown, ArrowUpRight, ExternalLink, Eye, EyeOff } from 'lucide-react'
-import { Markdown } from './Markdown'
+import { Markdown, inline } from './Markdown'
 import { essays } from './essays'
 import EssayProgress from './EssayProgress'
 import PortalIntro from './intro/PortalIntro'
@@ -692,7 +692,7 @@ export default function App() {
                       <p className="mt-1 font-mono lowercase text-meta tracking-[0.15em] text-fog whitespace-nowrap">{essay.date}</p>
                       {!isOpen && (
                         <p className="mt-2 text-base leading-[1.55] text-body max-w-xl">
-                          {essay.paragraphs[0]}
+                          {inline(essay.paragraphs[0])}
                         </p>
                       )}
                     </button>
