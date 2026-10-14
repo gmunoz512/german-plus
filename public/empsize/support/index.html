@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Empsize: support</title>
+    <meta name="description" content="Empsize support: turning it on and how to reach us." />
+    <link rel="icon" type="image/png" href="../../empsize-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root { --ink:#070503; --raised:#2c1e16; --line:#5c4636; --soft:#32261e; --mist:#e9e5dc; --fog:#8e8a99; --paper:#f4f2ec; --dim:#d8d3c8; --accent:#ffb867; }
+      * { box-sizing: border-box; }
+      body { margin:0; background:var(--ink); color:var(--mist); font-family:Inter,ui-sans-serif,system-ui,sans-serif; font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased; text-transform:lowercase; }
+      body::before { content:""; position:fixed; inset:0; pointer-events:none; background:radial-gradient(ellipse at top, rgba(255,184,103,0.13), transparent 55%); }
+      main { position:relative; max-width:44rem; margin:0 auto; padding:24px 24px 64px; }
+      header { display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; }
+      header a { color:var(--fog); text-decoration:none; font-size:14px; }
+      header a:hover, a:hover { color:var(--paper); }
+      .gm { font-family:"Instrument Serif",Georgia,serif; font-size:22px; color:var(--paper); text-transform:none; }
+      .app { display:flex; align-items:center; gap:14px; margin-top:36px; }
+      .app img { width:56px; height:56px; border-radius:14px; border:1px solid var(--line); }
+      h1 { font-family:"Instrument Serif",Georgia,serif; font-weight:400; font-size:clamp(2.4rem,7vw,3.4rem); line-height:1.05; color:var(--paper); margin:0; letter-spacing:-0.01em; }
+      .kicker { color:var(--fog); font-size:13px; letter-spacing:0.06em; }
+      h2 { font-size:17px; font-weight:500; color:var(--paper); margin:32px 0 6px; }
+      p, li { color:var(--mist); font-size:15px; }
+      ul { padding-left:18px; }
+      .card { margin-top:28px; border:1px solid var(--line); background:rgba(44,30,22,0.5); border-radius:18px; padding:20px 22px; }
+      .pill { display:inline-block; border-radius:999px; padding:2px 10px; font-size:11px; font-weight:500; background:rgba(255,184,103,0.14); color:var(--accent); }
+      a { color:var(--accent); text-decoration:none; }
+      .btn { display:inline-block; margin-top:8px; border-radius:999px; background:var(--paper); color:var(--ink); padding:8px 16px; font-size:14px; font-weight:500; }
+      .btn:hover { background:var(--dim); color:var(--ink); }
+      footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--soft); font-size:13px; color:var(--fog); display:flex; gap:18px; flex-wrap:wrap; }
+      footer a { color:var(--fog); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <a class="gm" href="../../">gm</a>
+        <nav style="display:flex;gap:18px"><a href="../privacy/">privacy</a><a href="../support/">support</a></nav>
+      </header>
+      <div class="app"><img src="../../empsize-icon.png" alt="empsize app icon" width="56" height="56" /><div><div style="color:var(--paper);font-weight:500">empsize</div><div class="kicker">bolds the start of every word so your eyes glide through text.</div></div></div>
+      <div style="margin-top:28px"><span class="pill">support</span></div>
+      <h1 style="margin-top:14px">need a hand?</h1>
+      <p style="margin-top:12px">email <a href="mailto:gmunoz512@icloud.com">gmunoz512@icloud.com</a> and i'll get back to you. a screenshot, your device, and your browser version help a lot.</p>
+
+      <h2>turning it on</h2>
+      <ul>
+        <li><strong style="color:var(--paper);font-weight:500">safari (iphone, ipad):</strong> settings → apps → safari → extensions → empsize. switch it on and allow on all websites.</li>
+        <li><strong style="color:var(--paper);font-weight:500">safari (mac):</strong> safari → settings → extensions, then check empsize.</li>
+        <li><strong style="color:var(--paper);font-weight:500">chrome:</strong> pin empsize from the puzzle menu, then click it to flip the switch.</li>
+      </ul>
+
+      <h2>common questions</h2>
+      <ul>
+        <li><strong style="color:var(--paper);font-weight:500">nothing is bolding.</strong> open the empsize menu and check the switch for that site, then reload the page.</li>
+        <li><strong style="color:var(--paper);font-weight:500">too much or too little bold?</strong> adjust the bold amount in the empsize menu.</li>
+        <li><strong style="color:var(--paper);font-weight:500">does anything get uploaded?</strong> no. see the <a href="../privacy/">privacy policy</a>.</li>
+      </ul>
+      <footer><span>german+ · new york</span><a href="../../">back to german+</a><a href="mailto:gmunoz512@icloud.com">gmunoz512@icloud.com</a></footer>
+    </main>
+  </body>
+</html>

@@ -506,7 +506,9 @@ export default function App() {
                         ))}
                       </div>
                       <p className="mt-5 text-sm leading-[1.55] text-body">
-                        in testflight (beta) for now. no app store link yet.
+                        in testflight (beta) for now.{' '}
+                        <a href="mailto:gmunoz512@icloud.com?subject=safekeep" className="text-paper underline decoration-line underline-offset-4 hover:decoration-paper transition-colors duration-200">reach out</a>{' '}
+                        if you want the app.
                       </p>
                       <div className="mt-3 flex flex-wrap items-center gap-5 text-sm">
                         <a href={`${import.meta.env.BASE_URL}safekeep/privacy/`} className="inline-flex items-center gap-1 text-fog hover:text-paper transition-colors duration-200">
@@ -515,6 +517,10 @@ export default function App() {
                         </a>
                         <a href={`${import.meta.env.BASE_URL}safekeep/support/`} className="inline-flex items-center gap-1 text-fog hover:text-paper transition-colors duration-200">
                           support
+                          <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
+                        </a>
+                        <a href="https://github.com/gmunoz512/safekeep" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-fog hover:text-paper transition-colors duration-200">
+                          github
                           <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
                         </a>
                       </div>
@@ -576,7 +582,20 @@ export default function App() {
                           </article>
                         ))}
                       </div>
-                      <div className="mt-6 flex flex-wrap items-center gap-5 text-sm">
+                      <p className="mt-5 text-sm leading-[1.55] text-body">
+                        in testflight (beta) for now.{' '}
+                        <a href="mailto:gmunoz512@icloud.com?subject=empsize" className="text-paper underline decoration-line underline-offset-4 hover:decoration-paper transition-colors duration-200">reach out</a>{' '}
+                        if you want the app.
+                      </p>
+                      <div className="mt-3 flex flex-wrap items-center gap-5 text-sm">
+                        <a href={`${import.meta.env.BASE_URL}empsize/privacy/`} className="inline-flex items-center gap-1 text-fog hover:text-paper transition-colors duration-200">
+                          privacy
+                          <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
+                        </a>
+                        <a href={`${import.meta.env.BASE_URL}empsize/support/`} className="inline-flex items-center gap-1 text-fog hover:text-paper transition-colors duration-200">
+                          support
+                          <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
+                        </a>
                         <a href="https://github.com/gmunoz512/focus-reader" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-fog hover:text-paper transition-colors duration-200">
                           github
                           <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
