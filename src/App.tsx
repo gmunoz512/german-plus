@@ -610,7 +610,7 @@ export default function App() {
               </li>
               <li className="border-t border-line-soft">
                 <a
-                  href="https://github.com/gmunoz512/SoundPhotoTest"
+                  href="https://github.com/gmunoz512/safekeep"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between gap-4 py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
