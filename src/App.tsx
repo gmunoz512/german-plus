@@ -129,7 +129,7 @@ const safekeepBits = [
 
 function EyeToggle({ open, label }: { open: boolean; label: string }) {
   return (
-    <span className="ml-auto -my-[6px] -mr-[6px] shrink-0 inline-flex size-8 items-center justify-center rounded-full text-fog transition-colors duration-200 group-hover:text-mist group-hover:bg-paper/5 group-active:bg-paper/10">
+    <span className="ml-auto shrink-0 inline-flex h-5 items-center justify-end text-fog transition-colors duration-200 group-hover:text-mist group-active:text-paper">
       <span className="sr-only">{open ? `less about ${label}` : `more about ${label}`}</span>
       {open ? <EyeOff className="size-[18px]" aria-hidden /> : <Eye className="size-[18px]" aria-hidden />}
     </span>
@@ -267,7 +267,7 @@ export default function App() {
                   type="button"
                   aria-expanded={stackdOpen}
                   onClick={() => setStackdOpen((o) => !o)}
-                  className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                  className="block w-[calc(100%+1.5rem)] text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
                     <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] whitespace-nowrap">stackd</h3>
@@ -327,7 +327,7 @@ export default function App() {
                   type="button"
                   aria-expanded={marsOpen}
                   onClick={() => setMarsOpen((o) => !o)}
-                  className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                  className="block w-[calc(100%+1.5rem)] text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
                     <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] whitespace-nowrap">mars</h3>
@@ -385,7 +385,7 @@ export default function App() {
                   type="button"
                   aria-expanded={scaleOpen}
                   onClick={() => setScaleOpen((o) => !o)}
-                  className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                  className="block w-[calc(100%+1.5rem)] text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
                     <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] whitespace-nowrap">intergalactic scale</h3>
@@ -455,7 +455,7 @@ export default function App() {
                   type="button"
                   aria-expanded={safekeepOpen}
                   onClick={() => setSafekeepOpen((o) => !o)}
-                  className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                  className="block w-[calc(100%+1.5rem)] text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
                     <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] whitespace-nowrap">safekeep</h3>
@@ -527,7 +527,7 @@ export default function App() {
                   type="button"
                   aria-expanded={empsizeOpen}
                   onClick={() => setEmpsizeOpen((o) => !o)}
-                  className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                  className="block w-[calc(100%+1.5rem)] text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
                     <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] whitespace-nowrap">empsize</h3>
@@ -696,7 +696,7 @@ export default function App() {
                           current === essay.id ? null : essay.id,
                         )
                       }
-                      className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
+                      className="block w-[calc(100%+1.5rem)] text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                     >
                       <div className="flex items-start gap-3">
                         <h3 className="font-mono lowercase text-title tracking-[0.15em] font-normal leading-[1.4] text-paper text-pretty">
