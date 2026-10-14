@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { ArrowUpRight, ChevronDown, ExternalLink } from 'lucide-react'
 import { essays } from './essays'
+import EssayProgress from './EssayProgress'
 import PortalIntro from './intro/PortalIntro'
 import { shouldPlayIntro } from './intro/storage'
 import SiteFrame from './SiteFrame'
@@ -147,6 +148,7 @@ export default function App() {
       {...(intro === 'playing' ? { inert: true, 'aria-hidden': true } : {})}
     >
       <SiteFrame />
+      {openEssay ? <EssayProgress key={openEssay} /> : null}
       <div
         aria-hidden
         data-reveal="0"
@@ -675,7 +677,7 @@ export default function App() {
                     {isOpen && (
                       <div className="pb-6 -mx-3 px-3">
                         <article className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
-                          <div className="space-y-4 max-w-xl text-[15px] sm:text-base leading-relaxed text-mist">
+                          <div data-essay-body className="space-y-4 max-w-xl text-[15px] sm:text-base leading-relaxed text-mist">
                             {essay.paragraphs.map((paragraph) => (
                               <p key={paragraph}>{paragraph}</p>
                             ))}
