@@ -243,7 +243,7 @@ export default function App() {
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               products
             </h2>
-            <p className="mt-3 max-w-lg font-mono uppercase text-[13px] tracking-[0.15em] text-fog">
+            <p className="mt-3 max-w-lg font-mono lowercase text-[13px] tracking-[0.15em] text-fog">
               my rabbit holes
             </p>
 
@@ -515,7 +515,7 @@ export default function App() {
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               fun builds: github
             </h2>
-            <p className="mt-3 max-w-lg font-mono uppercase text-[13px] tracking-[0.15em] text-fog">
+            <p className="mt-3 max-w-lg font-mono lowercase text-[13px] tracking-[0.15em] text-fog">
               weekend builds, side quests, and interest.. more soon
             </p>
 
@@ -566,7 +566,7 @@ export default function App() {
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               behind the veil
             </h2>
-            <p className="mt-3 max-w-lg font-mono uppercase text-[13px] tracking-[0.15em] text-fog">
+            <p className="mt-3 max-w-lg font-mono lowercase text-[13px] tracking-[0.15em] text-fog">
               short writings
             </p>
 
