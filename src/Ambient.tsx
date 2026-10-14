@@ -16,25 +16,6 @@ function useMedia(query: string) {
   return match
 }
 
-type Streak = { edge: number; reverse: boolean; start: number; dur: number }
-
-const STREAK_TAIL = 110
-
-function edgeEnds(r: DOMRect, edge: number) {
-  const tl = { x: r.left, y: r.top }
-  const tr = { x: r.right, y: r.top }
-  const br = { x: r.right, y: r.bottom }
-  const bl = { x: r.left, y: r.bottom }
-  return [
-    [tl, tr],
-    [tr, br],
-    [br, bl],
-    [bl, tl],
-  ][edge]
-}
-
-const easeOut = (t: number) => 1 - (1 - t) ** 3
-
 /** bias x into the empty side margins inside the frame */
 function marginX(w: number) {
   const gutter = Math.max(48, w * 0.14)
@@ -51,14 +32,13 @@ function Field() {
     const canvas = ref.current
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
-    const frame = document.querySelector<HTMLElement>('[data-frame-box]')
     const reduced = window.matchMedia(REDUCED).matches
 
     let w = 0
     let h = 0
     let motes: Mote[] = []
     const seed = () => {
-      const count = Math.max(18, Math.round((w * h) / 37000))
+      const count = Math.max(9, Math.round((w * h) / 74000))
       motes = Array.from({ length: count }, (_, i) => ({
         x: marginX(w),
         y: Math.random() * h,
@@ -85,9 +65,6 @@ function Field() {
     let raf = 0
     let last = 0
     let fade = 0
-    let streak: Streak | null = null
-    let nextStreak = performance.now() + 1500
-    let lastEdge = -1
     const draw = (now: number) => {
       const dt = last ? Math.min(now - last, 50) : 16
       last = now
@@ -124,54 +101,6 @@ function Field() {
           ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2)
           ctx.fill()
         }
-      }
-
-      if (frame && !reduced) {
-        if (!streak && now >= nextStreak) {
-          let edge = Math.floor(Math.random() * 4)
-          if (edge === lastEdge) edge = (edge + 1 + Math.floor(Math.random() * 3)) % 4
-          lastEdge = edge
-          streak = { edge, reverse: Math.random() < 0.5, start: now, dur: 800 + Math.random() * 400 }
-        }
-        if (streak) {
-          const t = (now - streak.start) / streak.dur
-          if (t >= 1) {
-            streak = null
-            nextStreak = now + 6000 + Math.random() * 4000
-          } else {
-            const [from, to] = edgeEnds(frame.getBoundingClientRect(), streak.edge)
-            const [a0, b0] = streak.reverse ? [to, from] : [from, to]
-            const len = Math.hypot(b0.x - a0.x, b0.y - a0.y)
-            const k = easeOut(t)
-            const ux = (b0.x - a0.x) / len
-            const uy = (b0.y - a0.y) / len
-            const hx = a0.x + ux * len * k
-            const hy = a0.y + uy * len * k
-            const tail = Math.min(STREAK_TAIL * (1 - k * 0.6), len * k)
-            const tx = hx - ux * tail
-            const ty = hy - uy * tail
-            const alpha = (1 - Math.max(0, (t - 0.7) / 0.3)) * Math.min(1, t / 0.08)
-
-            const g = ctx.createLinearGradient(hx, hy, tx, ty)
-            g.addColorStop(0, `rgba(255,214,160,${0.85 * alpha})`)
-            g.addColorStop(1, 'rgba(255,184,103,0)')
-            ctx.strokeStyle = g
-            ctx.lineWidth = 1.6
-            ctx.lineCap = 'round'
-            ctx.beginPath()
-            ctx.moveTo(hx, hy)
-            ctx.lineTo(tx, ty)
-            ctx.stroke()
-
-            const glow = ctx.createRadialGradient(hx, hy, 0, hx, hy, 8)
-            glow.addColorStop(0, `rgba(255,248,236,${alpha})`)
-            glow.addColorStop(0.3, `rgba(255,214,160,${0.7 * alpha})`)
-            glow.addColorStop(1, 'rgba(255,184,103,0)')
-            ctx.fillStyle = glow
-            ctx.fillRect(hx - 8, hy - 8, 16, 16)
-          }
-        }
-        canvas.dataset.streak = streak ? '1' : ''
       }
 
       if (!reduced) raf = requestAnimationFrame(draw)
