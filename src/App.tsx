@@ -516,7 +516,7 @@ export default function App() {
               fun builds: github
             </h2>
             <p className="mt-3 max-w-lg font-mono lowercase text-meta tracking-[0.15em] text-fog">
-              weekend builds, side quests, and interest.. more soon
+              weekend builds, side quests, and interests.. more soon
             </p>
 
             <ul className="mt-6 space-y-0">
