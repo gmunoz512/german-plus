@@ -114,6 +114,7 @@
 
 @layer components {
   .framed-page {
+    position: relative;
     padding: var(--frame-top) var(--frame-right) var(--frame-bottom) var(--frame-left);
   }
 
@@ -127,6 +128,15 @@
     z-index: 40;
     pointer-events: none;
     border-radius: var(--frame-r);
+  }
+
+  /* phones: the frame is a card around the page, not a viewport-height overlay.
+     a fixed height was cutting through about (and anything else taller than the screen). */
+  @media (max-width: 767px) {
+    .framed-page:not(.intro-pending) .site-frame,
+    .framed-page:not(.intro-pending) .site-frame-mask {
+      position: absolute;
+    }
   }
 
   .site-frame {

@@ -4,9 +4,10 @@ const corners: MarkId[] = ['tl', 'tr', 'bl', 'br']
 const ticks: MarkId[] = ['t', 'r', 'b', 'l']
 
 /**
- * Hairline rounded frame pinned to the viewport (safe-area aware), cocoa outside,
- * with + marks in the corners and small ticks at the edge midpoints on wider screens.
- * Same proportions as the frame on intergalactic scale.
+ * Hairline rounded frame (safe-area aware), cocoa outside, with + marks in the
+ * corners and small ticks at the edge midpoints on wider screens.
+ * On phones it wraps the page so it grows with the copy. On wider screens it
+ * stays pinned to the viewport. Same proportions as intergalactic scale.
  */
 export default function SiteFrame() {
   return (
