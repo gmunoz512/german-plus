@@ -242,24 +242,13 @@ export default function App() {
             </h2>
             <div className="mt-4 space-y-4 max-w-xl text-base leading-[1.55] text-body">
               <p>
-                i want to eventually bring everything that&apos;s in my head to
-                reality. usually i approach everything from first principles,
-                breaking things down to a fundamental level.
+                i want to eventually bring everything in my head into reality. my default is first principles: strip a problem down to its fundamentals and rebuild from there.
               </p>
               <p>
-                i believe it stemmed from my dad letting me tinker with broken
-                washer machines at his laundromat: taking them apart and putting
-                them back together to see what was wrong. eventually i
-                translated that way of thinking to my work: understanding
-                processes at a fundamental level, then building a more efficient
-                one to make things smoother. i quantified each idea to decide
-                whether it was worth it.
+                i think that instinct started at my dad&apos;s laundromat, where he let me tinker with broken washing machines, taking them apart and piecing them back together to diagnose what went wrong. over time that became how i work: understand a process at its most granular level, then engineer a leaner one that runs smoother. before committing to an idea, i quantify it to see whether it&apos;s actually worth pursuing.
               </p>
               <p>
-                on the other hand, i felt the creative itch to scratch,
-                following things i was interested in learning about, like space
-                and economics. hopefully this is a place for you to get a slice
-                of how my brain works.
+                the other half of me has a creative itch i can&apos;t ignore, so i chase whatever i&apos;m curious about, from space to economics. hopefully this is a place where you get a glimpse of how my brain works.
               </p>
             </div>
           </section>
