@@ -1,15 +1,25 @@
+import tabsOpen from './posts/100-tabs-open.md?raw'
+
 export type Essay = {
   id: string
   title: string
   date: string
   paragraphs: string[]
+  markdown?: string
 }
 
 export const essays: Essay[] = [
   {
+    id: '100-tabs-open',
+    title: '100 tabs open',
+    date: 'oct 14, 2026',
+    paragraphs: ['on reading, rewiring, and the ability hiding inside the word disability.'],
+    markdown: tabsOpen,
+  },
+  {
     id: 'four-ways-to-reach',
     title: 'four ways to reach',
-    date: 'oct 13, 2026',
+    date: 'oct 4, 2026',
     paragraphs: [
       "i used to think ambition meant one thing: more. more users, more money, more hours. lately i think it's less a size and more a direction. there are a few ways to push, and they feel completely different when you're in them.",
       "the sprint. stackd connects hosts, vendors, and guests, and there's a long list of reasons to wait before showing it to anyone. i'm trying not to. put it out, watch what people actually do, fix it, and do it again. the plan i'd write today would be wrong by next month anyway.",

@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { ArrowDown, ArrowUpRight, ExternalLink, Eye, EyeOff } from 'lucide-react'
+import { Markdown } from './Markdown'
 import { essays } from './essays'
 import EssayProgress from './EssayProgress'
 import PortalIntro from './intro/PortalIntro'
@@ -700,9 +701,13 @@ export default function App() {
                       <div className="pb-6 -mx-3 px-3">
                         <article className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
                           <div data-essay-body className="space-y-4 max-w-xl text-base leading-[1.55] text-body">
-                            {essay.paragraphs.map((paragraph) => (
-                              <p key={paragraph}>{paragraph}</p>
-                            ))}
+                            {essay.markdown ? (
+                              <Markdown source={essay.markdown} />
+                            ) : (
+                              essay.paragraphs.map((paragraph) => (
+                                <p key={paragraph}>{paragraph}</p>
+                              ))
+                            )}
                           </div>
                         </article>
                       </div>
