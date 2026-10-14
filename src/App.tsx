@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { ArrowDown, ArrowUpRight, ExternalLink, Eye, EyeOff } from 'lucide-react'
+import { ArrowUpRight, ExternalLink, Eye, EyeOff } from 'lucide-react'
 import { Markdown, inline } from './Markdown'
 import { essays } from './essays'
 import EssayProgress from './EssayProgress'
@@ -658,18 +658,6 @@ export default function App() {
                     intergalactic scale
                   </span>
                   <ArrowUpRight className="size-4 text-fog group-hover:text-accent transition-colors" aria-hidden />
-                </a>
-              </li>
-              <li className="border-t border-line-soft">
-                <a
-                  href="#empsize"
-                  onClick={() => setEmpsizeOpen(true)}
-                  className="flex items-center justify-between gap-4 py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
-                >
-                  <span className="font-mono lowercase text-title tracking-[0.15em] font-normal text-paper leading-[1.4] group-hover:text-accent transition-colors">
-                    empsize
-                  </span>
-                  <ArrowDown className="size-4 text-fog group-hover:text-accent transition-colors" aria-hidden />
                 </a>
               </li>
             </ul>
