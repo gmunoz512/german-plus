@@ -114,7 +114,7 @@ function EyeToggle({ open, label }: { open: boolean; label: string }) {
 
 function StatusPill({ status }: { status: string }) {
   return (
-    <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium tracking-wide border border-line text-fog lowercase">
+    <span className="inline-flex items-center rounded-full px-2.5 py-0.5 font-sans text-[11px] font-medium tracking-wide border border-line text-fog lowercase">
       {status}
     </span>
   )
@@ -169,7 +169,7 @@ export default function App() {
           <a href="#top" className="font-serif text-xl text-paper tracking-tight normal-case">
             gm
           </a>
-          <nav className="flex items-center gap-5 text-sm text-fog">
+          <nav className="flex items-center gap-5 text-sm text-fog font-sans">
             <a href="#products" className="hover:text-paper transition-colors duration-200">
               products
             </a>
@@ -215,7 +215,7 @@ export default function App() {
             <h2 className="font-serif text-3xl sm:text-4xl text-paper tracking-tight text-balance">
               about
             </h2>
-            <div className="mt-4 space-y-4 max-w-xl text-[15px] sm:text-base leading-relaxed text-mist">
+            <div className="mt-4 space-y-4 max-w-xl text-[17px] sm:text-base leading-relaxed text-mist">
               <p>
                 i want to eventually bring everything that&apos;s in my head to
                 reality. usually i approach everything from first principles,
@@ -256,11 +256,11 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-medium text-paper whitespace-nowrap">stackd</h3>
+                    <h3 className="text-xl font-medium text-paper whitespace-nowrap">stackd</h3>
                     <StatusPill status="draft live" />
                     <EyeToggle open={stackdOpen} label="stackd" />
                   </div>
-                  <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
+                  <p className="mt-2 text-[17px] leading-[1.55] text-mist max-w-xl">
                     three-sided marketplace for str hosts, local experience and
                     restaurant vendors, and guests, with jc, the trip planner,
                     built in.
@@ -316,11 +316,11 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-medium text-paper whitespace-nowrap">mars</h3>
+                    <h3 className="text-xl font-medium text-paper whitespace-nowrap">mars</h3>
                     <StatusPill status="live" />
                     <EyeToggle open={marsOpen} label="mars" />
                   </div>
-                  <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
+                  <p className="mt-2 text-[17px] leading-[1.55] text-mist max-w-xl">
                     a weekend toy: spin mars, drop your birthday, stand on
                     jezero and look up. no pitch deck energy.
                   </p>
@@ -374,11 +374,11 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-medium text-paper whitespace-nowrap">intergalactic scale</h3>
+                    <h3 className="text-xl font-medium text-paper whitespace-nowrap">intergalactic scale</h3>
                     <StatusPill status="live" />
                     <EyeToggle open={scaleOpen} label="intergalactic scale" />
                   </div>
-                  <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
+                  <p className="mt-2 text-[17px] leading-[1.55] text-mist max-w-xl">
                     swipe from a dwarf planet to the edge of the observable
                     universe, one object at a time, all at true scale.
                   </p>
@@ -415,7 +415,7 @@ export default function App() {
                       </div>
                       <figure className="mt-5 border-l border-accent/60 pl-4">
                         <p className="text-xs text-fog tracking-wider">fun fact</p>
-                        <blockquote className="mt-1.5 text-[15px] leading-relaxed text-paper-dim max-w-lg">
+                        <blockquote className="mt-1.5 text-[17px] leading-[1.55] text-paper-dim max-w-lg">
                           “if the sun were the size of a hot tub, earth would be
                           the size of a sesame seed.”
                         </blockquote>
@@ -444,11 +444,11 @@ export default function App() {
                   className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-medium text-paper whitespace-nowrap">safekeep</h3>
+                    <h3 className="text-xl font-medium text-paper whitespace-nowrap">safekeep</h3>
                     <StatusPill status="testflight beta" />
                     <EyeToggle open={safekeepOpen} label="safekeep" />
                   </div>
-                  <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
+                  <p className="mt-2 text-[17px] leading-[1.55] text-mist max-w-xl">
                     add a voice note to a photo, remember it forever.
                   </p>
                 </button>
@@ -586,7 +586,7 @@ export default function App() {
                       className="w-full text-left py-5 group hover:bg-ink-raised/40 -mx-3 px-3 rounded-lg transition-colors duration-200"
                     >
                       <div className="flex items-center gap-3">
-                        <h3 className="text-lg font-medium text-paper whitespace-nowrap">
+                        <h3 className="text-xl font-medium text-paper whitespace-nowrap">
                           {essay.title}
                         </h3>
                         <span className="text-xs text-fog tracking-wider">
@@ -600,7 +600,7 @@ export default function App() {
                         />
                       </div>
                       {!isOpen && (
-                        <p className="mt-2 text-[15px] leading-relaxed text-mist max-w-xl">
+                        <p className="mt-2 text-[17px] leading-[1.55] text-mist max-w-xl">
                           {essay.paragraphs[0]}
                         </p>
                       )}
@@ -618,7 +618,7 @@ export default function App() {
                     {isOpen && (
                       <div className="pb-6 -mx-3 px-3">
                         <article className="rounded-2xl border border-line bg-ink-raised/50 px-5 py-5 sm:px-6">
-                          <div data-essay-body className="space-y-4 max-w-xl text-[15px] sm:text-base leading-relaxed text-mist">
+                          <div data-essay-body className="space-y-4 max-w-xl text-[17px] sm:text-base leading-relaxed text-mist">
                             {essay.paragraphs.map((paragraph) => (
                               <p key={paragraph}>{paragraph}</p>
                             ))}
