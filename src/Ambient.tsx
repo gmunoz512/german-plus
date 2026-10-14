@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-const DESKTOP = '(min-width: 1024px)'
+const DESKTOP = '(min-width: 768px)'
 const REDUCED = '(prefers-reduced-motion: reduce)'
 
 type Mote = { x: number; y: number; vx: number; vy: number; r: number; a: number; phase: number; plus: boolean; warm: boolean }
@@ -26,6 +26,15 @@ function pointOnRect(r: DOMRect, d: number) {
   return { x: r.left, y: r.bottom - (p - 2 * w - h) }
 }
 
+/** bias x into the empty side margins inside the frame */
+function marginX(w: number) {
+  const gutter = Math.max(48, w * 0.14)
+  if (Math.random() < 0.62) {
+    return Math.random() < 0.5 ? Math.random() * gutter : w - Math.random() * gutter
+  }
+  return Math.random() * w
+}
+
 function Field() {
   const ref = useRef<HTMLCanvasElement>(null)
 
@@ -40,17 +49,17 @@ function Field() {
     let h = 0
     let motes: Mote[] = []
     const seed = () => {
-      const count = Math.round((w * h) / 36000)
+      const count = Math.max(48, Math.round((w * h) / 14000))
       motes = Array.from({ length: count }, (_, i) => ({
-        x: Math.random() * w,
+        x: marginX(w),
         y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.08,
-        vy: -0.03 - Math.random() * 0.06,
-        r: 0.6 + Math.random() * 1.1,
-        a: 0.16 + Math.random() * 0.22,
+        vx: (Math.random() - 0.5) * 0.1,
+        vy: -0.04 - Math.random() * 0.07,
+        r: 1.4 + Math.random() * 2.2,
+        a: 0.38 + Math.random() * 0.32,
         phase: Math.random() * Math.PI * 2,
-        plus: i % 6 === 0,
-        warm: Math.random() < 0.55,
+        plus: i % 5 === 0,
+        warm: Math.random() < 0.6,
       }))
     }
     const resize = () => {
@@ -71,24 +80,27 @@ function Field() {
     const draw = (now: number) => {
       const dt = last ? Math.min(now - last, 50) : 16
       last = now
-      fade = reduced ? 1 : Math.min(1, fade + dt / 2400)
+      fade = reduced ? 1 : Math.min(1, fade + dt / 900)
       ctx.clearRect(0, 0, w, h)
 
       for (const m of motes) {
         if (!reduced) {
           m.x += m.vx * dt * 0.06
           m.y += m.vy * dt * 0.06
-          if (m.y < -10) m.y = h + 10
-          if (m.x < -10) m.x = w + 10
-          if (m.x > w + 10) m.x = -10
+          if (m.y < -12) {
+            m.y = h + 12
+            m.x = marginX(w)
+          }
+          if (m.x < -12) m.x = w + 12
+          if (m.x > w + 12) m.x = -12
         }
-        const twinkle = 0.65 + 0.35 * Math.sin(now / 2600 + m.phase)
+        const twinkle = 0.7 + 0.3 * Math.sin(now / 2200 + m.phase)
         const a = m.a * twinkle * fade
         const c = m.warm ? '255,184,103' : '244,242,236'
         if (m.plus) {
-          const s = m.r * 2.6
+          const s = m.r * 2.4
           ctx.strokeStyle = `rgba(${c},${a})`
-          ctx.lineWidth = 0.8
+          ctx.lineWidth = 1.15
           ctx.beginPath()
           ctx.moveTo(m.x - s, m.y)
           ctx.lineTo(m.x + s, m.y)
@@ -105,14 +117,15 @@ function Field() {
 
       if (frame && !reduced) {
         const rect = frame.getBoundingClientRect()
-        const d = now / 60000
+        const d = now / 48000
         for (const offset of [0, 0.5]) {
           const p = pointOnRect(rect, d + offset)
-          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 90)
-          g.addColorStop(0, `rgba(255,184,103,${0.16 * fade})`)
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 130)
+          g.addColorStop(0, `rgba(255,184,103,${0.34 * fade})`)
+          g.addColorStop(0.45, `rgba(255,184,103,${0.12 * fade})`)
           g.addColorStop(1, 'rgba(255,184,103,0)')
           ctx.fillStyle = g
-          ctx.fillRect(p.x - 90, p.y - 90, 180, 180)
+          ctx.fillRect(p.x - 130, p.y - 130, 260, 260)
         }
       }
 
@@ -135,7 +148,13 @@ function Field() {
     }
   }, [])
 
-  return <canvas ref={ref} aria-hidden className="pointer-events-none fixed inset-0 h-full w-full" />
+  return (
+    <canvas
+      ref={ref}
+      aria-hidden
+      className="pointer-events-none fixed inset-0 z-[1] h-full w-full"
+    />
+  )
 }
 
 export default function Ambient() {

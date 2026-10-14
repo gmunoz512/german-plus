@@ -189,9 +189,9 @@ export default function App() {
         data-reveal="0"
         className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(255,184,103,0.13),_transparent_55%)]"
       />
-      {intro === 'done' && <Ambient />}
+      {intro !== 'playing' && <Ambient />}
 
-      <div className="relative mx-auto w-full max-w-3xl md:max-w-6xl px-6 sm:px-8">
+      <div className="relative z-10 mx-auto w-full max-w-3xl md:max-w-6xl px-6 sm:px-8">
         <header data-reveal="0" className={`flex items-center justify-between pt-6 pb-3 ${fadeUp()}`}>
           <a href="#top" className="font-serif text-xl text-paper tracking-tight normal-case">
             gm
