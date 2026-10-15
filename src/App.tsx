@@ -337,8 +337,8 @@ export default function App() {
                     <EyeToggle open={marsOpen} label="mars" />
                   </div>
                   <p className="mt-2 text-base leading-[1.55] text-body max-w-xl">
-                    a weekend toy: spin mars, drop your birthday, stand on
-                    jezero and look up. no pitch deck energy.
+                    weekend project: spin mars, drop your birthday and look
+                    up. share your poster with me :)
                   </p>
                 </button>
 
