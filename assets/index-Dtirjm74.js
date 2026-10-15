@@ -83,7 +83,7 @@ psychologically, one of the coolest things i've learned is that we have an abili
 not instead of. *inside* of. dis·**ability**. the hard parts are real, and if they're running your life, talking to an actual professional beats any blog post, this one included. but the 100 tabs aren't only noise. they're why i notice the weird connection, start the thing, and stay up chasing it.
 
 so i'm not trying to close the tabs. i'm learning which ones to keep open.
-`},{id:`four-ways-to-reach`,title:`four ways to reach`,date:`oct 4, 2026`,paragraphs:[`ambition isn't a size. it's a direction.`],markdown:`i used to think ambition meant one thing: more. now i think it's about direction, locked in, with the journey as the destination. and that journey tends to take one of four shapes.
+`},{id:`four-ways-to-reach`,title:`four ways to peak`,date:`oct 4, 2026`,paragraphs:[`ambition isn't a size. it's a direction.`],markdown:`i used to think ambition meant one thing: more. now i think it's about direction, locked in, with the journey as the destination. and that journey tends to take one of four shapes.
 
 **the sprint.** stackd connects hosts, vendors, and guests, and there's a long list of reasons to wait before showing it to anyone. i'm trying not to. put it out, watch what people actually do, fix it, and do it again. the plan i'd write today would be wrong by next month anyway.
 
