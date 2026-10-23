@@ -4,7 +4,10 @@
  * tracking it live. They vanish the same frame the finger lifts. Canvas 2D overlay with
  * pointer-events: none; it draws only while a finger is down, so idle does no work.
  */
-const GROW = 420;        // ms to reach the thumb
+const GROW = 90;         // ms to reach the thumb (starts near-full)
+const START = 0.85;      // strands begin at 85% length on touchdown
+const TAP = 150;         // touches shorter than this count as a quick tap
+const LINGER = 120;      // quick taps keep the flash this long after lift
 const STROKE = 1;        // css px: matches the site border (1px solid)
 
 export function isPhone() {
@@ -18,7 +21,7 @@ export function mountEdges(opts = {}) {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
-  Object.assign(canvas.style, { position: 'fixed', inset: '0', width: '100vw', height: '100vh',
+  Object.assign(canvas.style, { position: 'fixed', inset: '0', width: innerWidth + 'px', height: innerHeight + 'px',
     pointerEvents: 'none', zIndex: '60', display: 'block' });
   canvas.setAttribute('aria-hidden', 'true');
   document.body.appendChild(canvas);
@@ -27,9 +30,12 @@ export function mountEdges(opts = {}) {
   let dpr = 1;
   const resize = () => {
     dpr = Math.min(devicePixelRatio || 1, opts.maxDpr || 3);
+    canvas.style.width = innerWidth + 'px'; canvas.style.height = innerHeight + 'px';
     canvas.width = Math.round(innerWidth * dpr); canvas.height = Math.round(innerHeight * dpr);
   };
   resize(); addEventListener('resize', resize);
+  const vv = window.visualViewport; vv && vv.addEventListener('resize', resize);
+  let lingerT = 0;
 
   let touch = null;   // { id, x, y, t0, side, offs, bends }
   let raf = 0;
@@ -54,7 +60,7 @@ export function mountEdges(opts = {}) {
   function frame(now) {
     raf = 0;
     if (!touch) return clear();
-    const W = innerWidth, k = ease(Math.min(1, (now - touch.t0) / GROW));
+    const W = innerWidth, k = START + (1 - START) * ease(Math.min(1, (now - touch.t0) / GROW));
     if (now - lastRoll > CRACKLE) { lastRoll = now; touch.roll = (Math.random() * 1e9) | 0; }
     clear(); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.globalAlpha = 0.5; ctx.strokeStyle = color; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
@@ -95,13 +101,14 @@ export function mountEdges(opts = {}) {
   }
   const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
 
-  const onDown = (e) => {
-    if (!e.isPrimary || e.pointerType === 'mouse') return;
-    const t = e.target;
-    if (t instanceof Element && t.closest('.venom-slot, .venom-fallback, input, textarea, select, [contenteditable]')) return;
-    touch = { id: e.pointerId, x: e.clientX, y: e.clientY, t0: performance.now(),
-      side: e.clientX < innerWidth / 2 ? -1 : 1, offs: [-26, 22], bends: [14, -10] };
-    kick();
+  const SKIP = '.venom-slot, .venom-fallback, input, textarea, select, [contenteditable]';
+  const stop = () => { clearTimeout(lingerT); touch = null; cancelAnimationFrame(raf); raf = 0; clear(); };
+  const start = (id, x, y, target) => {
+    if (target instanceof Element && target.closest(SKIP)) return;
+    clearTimeout(lingerT);   // a new touch always takes over (also mid-linger / multi-touch)
+    const now = performance.now();
+    touch = { id, x, y, t0: now, down: now, side: x < innerWidth / 2 ? -1 : 1, offs: [-26, 22], bends: [14, -10] };
+    lastRoll = -1e9; kick();
   };
   // follow the finger anywhere; swap to the nearer edge once it clearly crosses the middle
   const track = (x, y) => {
@@ -111,31 +118,32 @@ export function mountEdges(opts = {}) {
     else if (touch.side > 0 && x < W * 0.4) { touch.side = -1; touch.t0 = performance.now(); }
     kick();
   };
-  const onMove = (e) => {
-    if (!touch || e.pointerId !== touch.id) return;
-    track(e.clientX, e.clientY);
+  // lift: held touches vanish the same frame; quick taps keep a short flash so they're visible
+  const end = () => {
+    if (!touch || touch.ending) return;
+    if (performance.now() - touch.down < TAP) { touch.ending = true; lingerT = setTimeout(stop, LINGER); }
+    else stop();
   };
-  // finger lifts -> lines vanish the same frame: no retract, no fade
-  const onUp = (e) => {
-    if (!touch || e.pointerId !== touch.id) return;
-    touch = null; cancelAnimationFrame(raf); raf = 0; clear();
-  };
+  // Touch events are the source of truth on phones: they keep firing through scrolls (pointer events
+  // get pointercancel'd the moment the page starts scrolling).
+  const find = (list) => { if (!touch) return null; for (const t of list) if (t.identifier === touch.id) return t; return null; };
+  const onTS = (e) => { const t = e.changedTouches[e.changedTouches.length - 1]; if (t) start(t.identifier, t.clientX, t.clientY, e.target); };
+  const onTM = (e) => { const t = find(e.changedTouches); if (t && !touch.ending) track(t.clientX, t.clientY); };
+  const onTE = (e) => { if (find(e.changedTouches)) end(); };
+  // pen / browsers without touch events: pointer fallback
+  const hasTouch = 'ontouchstart' in window;
+  const onPD = (e) => { if (hasTouch || e.pointerType === 'mouse') return; start('p' + e.pointerId, e.clientX, e.clientY, e.target); };
+  const onPM = (e) => { if (!hasTouch && touch && touch.id === 'p' + e.pointerId && !touch.ending) track(e.clientX, e.clientY); };
+  const onPU = (e) => { if (!hasTouch && touch && touch.id === 'p' + e.pointerId) end(); };
   const L = { passive: true, capture: true };
-  addEventListener('pointerdown', onDown, L);
-  addEventListener('pointermove', onMove, L);
-  addEventListener('pointerup', onUp, L);
-  // touch-action scroll fires pointercancel; keep tracking via touchmove so lines follow during scroll-drags
-  const onTouchMove = (e) => { if (touch && e.touches[0]) track(e.touches[0].clientX, e.touches[0].clientY); };
-  const onTouchEnd = (e) => { if (touch && !e.touches.length) { touch = null; cancelAnimationFrame(raf); raf = 0; clear(); } };
-  addEventListener('touchmove', onTouchMove, L);
-  addEventListener('touchend', onTouchEnd, L);
-  addEventListener('touchcancel', onTouchEnd, L);
+  const evs = [['touchstart', onTS], ['touchmove', onTM], ['touchend', onTE], ['touchcancel', onTE],
+    ['pointerdown', onPD], ['pointermove', onPM], ['pointerup', onPU], ['pointercancel', onPU]];
+  for (const [n, f] of evs) addEventListener(n, f, L);
 
   return {
     destroy() {
-      cancelAnimationFrame(raf); removeEventListener('resize', resize);
-      for (const [n, f] of [['pointerdown', onDown], ['pointermove', onMove], ['pointerup', onUp],
-        ['touchmove', onTouchMove], ['touchend', onTouchEnd], ['touchcancel', onTouchEnd]]) removeEventListener(n, f, true);
+      stop(); removeEventListener('resize', resize); vv && vv.removeEventListener('resize', resize);
+      for (const [n, f] of evs) removeEventListener(n, f, true);
       canvas.remove();
     },
   };
