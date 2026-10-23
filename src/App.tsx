@@ -7,6 +7,7 @@ import Ambient from './Ambient'
 import PortalIntro from './intro/PortalIntro'
 import { shouldPlayIntro } from './intro/storage'
 import SiteFrame from './SiteFrame'
+import VenomButton from './VenomButton'
 
 const pillars = [
   {
@@ -749,7 +750,10 @@ export default function App() {
 
         <footer data-reveal="4" className="py-8 sm:py-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <p className="font-serif text-xl text-paper tracking-tight normal-case">german<span className="text-accent">+</span></p>
+            <div className="flex items-center gap-4">
+              <p className="font-serif text-xl text-paper tracking-tight normal-case">german<span className="text-accent">+</span></p>
+              <VenomButton />
+            </div>
             <p className="mt-1 font-mono lowercase text-meta tracking-[0.15em] text-fog">new york · building</p>
           </div>
           <div className="flex flex-wrap items-center gap-5">
