@@ -35,7 +35,7 @@ export const products: Product[] = [
       { num: '04', title: 'jc', body: 'an in-product trip planner. it reads preferences, inventory, and context, then proposes days that feel personal, not generic.' },
       { num: '05', title: 'trust & booking', body: 'one loop from discovery to confirmation. clear roles, clear handoffs, and a record everyone can stand behind.' },
     ],
-    cta: { label: 'open stackd draft', href: 'https://stackddraft.lovable.app' },
+    cta: { label: 'open stackd draft', href: 'https://stackdfinds.com' },
   },
   {
     id: 'mars',
