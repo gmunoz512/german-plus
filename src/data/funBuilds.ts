@@ -1,5 +1,5 @@
 export const funBuilds = [
-  { name: 'stackd', href: 'https://github.com/gmunoz512/stackbnb-60920' },
+  { name: 'stackd', href: 'https://stackdfinds.com' },
   { name: 'safekeep', href: 'https://github.com/gmunoz512/safekeep' },
   { name: 'empsize', href: 'https://github.com/gmunoz512/focus-reader' },
   { name: 'birthday in mars', href: 'https://github.com/gmunoz512/mars-sky' },
