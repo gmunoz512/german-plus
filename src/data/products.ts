@@ -107,4 +107,21 @@ export const products: Product[] = [
     ],
     beta: { github: 'https://github.com/gmunoz512/focus-reader' },
   },
+  {
+    id: 'diamond-trainer',
+    name: 'diamond trainer',
+    status: 'beta',
+    summary:
+      'learn and drill pool kick systems: the halfway rule, the plus system and corner-5.',
+    intro:
+      'a mobile-first 3d browser game for learning pool kick systems on a true-scale table in a cigar lounge. installable, and it works offline.',
+    icon: true,
+    bits: [
+      { num: '01', title: 'one rail', body: 'the halfway rule: aim at the midpoint between the cue and your ball on the far rail.' },
+      { num: '02', title: 'two rails', body: 'the plus system. go off the far short rail first. cue + aim = arrival, so aim = target − cue.' },
+      { num: '03', title: 'three rails', body: 'the corner-5 diamond system. cue − aim = arrival, so aim = cue − target.' },
+      { num: '04', title: 'true-scale table', body: 'drawn to wpa 9-ft specs, in a cigar lounge. a pwa you can install and play offline.' },
+    ],
+    cta: { label: 'open diamond trainer', href: 'https://diamond-trainer.h9dzwb9d62.workers.dev' },
+  },
 ]
