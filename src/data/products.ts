@@ -122,6 +122,5 @@ export const products: Product[] = [
       { num: '03', title: 'three rails', body: 'the corner-5 diamond system. cue − aim = arrival, so aim = cue − target.' },
       { num: '04', title: 'true-scale table', body: 'drawn to wpa 9-ft specs, in a cigar lounge. a pwa you can install and play offline.' },
     ],
-    cta: { label: 'open diamond trainer', href: 'https://diamond-trainer.h9dzwb9d62.workers.dev' },
   },
 ]
