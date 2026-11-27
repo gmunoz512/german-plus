@@ -18,6 +18,8 @@ export type Product = {
   cta?: { label: string; href: string }
   /** testflight footer: reach-out line + privacy / support / github */
   beta?: { github: string }
+  /** privacy / support footer links, without the testflight reach-out line */
+  docs?: boolean
 }
 
 export const products: Product[] = [
@@ -75,7 +77,7 @@ export const products: Product[] = [
   {
     id: 'safekeep',
     name: 'safekeep',
-    status: 'testflight beta',
+    status: 'live',
     summary: 'add a voice note to a photo, remember it forever.',
     intro:
       'a native iphone app (swiftui, ios 16+). it saves a voice note into a live photo copy of your picture, so you can press and hold to hear it.',
@@ -86,7 +88,8 @@ export const products: Product[] = [
       { num: '03', title: 'from voice memos', body: 'share a memo to safekeep and pick the photo it belongs to.' },
       { num: '04', title: 'original untouched', body: 'your original photo is never changed. safekeep only saves a new copy.' },
     ],
-    beta: { github: 'https://github.com/gmunoz512/safekeep' },
+    cta: { label: 'open on the app store', href: 'https://apps.apple.com/us/app/safekeep-hear-your-photos/id6816757939' },
+    docs: true,
   },
   {
     id: 'empsize',

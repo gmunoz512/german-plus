@@ -89,27 +89,30 @@ export default function ProductCard({ product: p, open, onToggle }: Props) {
             )}
 
             {p.beta && (
-              <>
-                <p className="mt-5 text-sm leading-[1.55] text-body">
-                  in testflight (beta) for now.{' '}
-                  <a href={`mailto:gmunoz512@icloud.com?subject=${p.id}`} className="text-paper underline decoration-line underline-offset-4 hover:decoration-paper transition-colors duration-200">reach out</a>{' '}
-                  if you want the app.
-                </p>
-                <div className="mt-3 flex flex-wrap items-center gap-5 text-sm">
-                  <a href={`${base}${p.id}/privacy/`} className={smallLink}>
-                    privacy
-                    <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
-                  </a>
-                  <a href={`${base}${p.id}/support/`} className={smallLink}>
-                    support
-                    <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
-                  </a>
+              <p className="mt-5 text-sm leading-[1.55] text-body">
+                in testflight (beta) for now.{' '}
+                <a href={`mailto:gmunoz512@icloud.com?subject=${p.id}`} className="text-paper underline decoration-line underline-offset-4 hover:decoration-paper transition-colors duration-200">reach out</a>{' '}
+                if you want the app.
+              </p>
+            )}
+
+            {(p.beta || p.docs) && (
+              <div className={`${p.beta ? 'mt-3' : 'mt-5'} flex flex-wrap items-center gap-5 text-sm`}>
+                <a href={`${base}${p.id}/privacy/`} className={smallLink}>
+                  privacy
+                  <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
+                </a>
+                <a href={`${base}${p.id}/support/`} className={smallLink}>
+                  support
+                  <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
+                </a>
+                {p.beta && (
                   <a href={p.beta.github} target="_blank" rel="noopener noreferrer" className={smallLink}>
                     github
                     <ArrowUpRight className="size-3.5 opacity-70" aria-hidden />
                   </a>
-                </div>
-              </>
+                )}
+              </div>
             )}
           </div>
         </div>
